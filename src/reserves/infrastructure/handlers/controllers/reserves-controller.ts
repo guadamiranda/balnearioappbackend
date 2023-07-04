@@ -1,3 +1,4 @@
+import { ReserveCreateResponseDto } from '../dto/response/reserve-create-response.dto';
 import { ReserveCreateRequestDto } from '../dto/request/reserve-create-request.dto';
 import { Controller, Post, Req } from '@nestjs/common';
 import { 
@@ -13,8 +14,8 @@ export class ReservesController {
 
   @Post(RESERVE_POST_PATH)
   //FALTA EL RESPONSE DE DEFINIR
-  create(@Req() req: ReserveCreateRequestDto): any {
+  create(@Req() req: ReserveCreateRequestDto): ReserveCreateResponseDto {
 
-    return ''
+    return 
   }
 }

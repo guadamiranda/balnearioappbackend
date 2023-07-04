@@ -2,7 +2,7 @@ import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 
 const PORT_SERVER = 3000
-const BASE_PATH = 'balneario-api'
+const BASE_PATH = 'balneario/api'
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);

@@ -1,6 +1,6 @@
 import { Request } from 'express';
 
-export interface ClientsReserve {
+export interface ResidentsReserve {
     dni: string,
     memberNumber: string,
 }
@@ -18,8 +18,8 @@ export interface ReserveCreateRequestDto extends Request {
         idEmploye: string,
         initDate: string,
         finishDate: string,
-        clientsDni: ClientsReserve[],
-        cardplates: VehiclesReserve[],
+        residents: ResidentsReserve[],
+        vehicles: VehiclesReserve[],
         price: number,
         managerDni: string,
         managerFirstName: string,
