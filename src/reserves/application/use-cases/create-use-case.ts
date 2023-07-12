@@ -1,8 +1,8 @@
 import { ReserveCreateResponseDto } from "../../infrastructure/handlers/dto/response/reserve-create-response.dto";
-import { ICreauteUseCase } from "./create-use-case-interface";
+import { ICreateUseCase } from "./create-use-case-interface";
 import { CreateCommand } from "./command/create-command";
 
-export class CreateUseCase implements ICreauteUseCase {
+export class CreateUseCase implements ICreateUseCase {
     async execute(createCommand: CreateCommand): Promise<ReserveCreateResponseDto> {
 
         // De momento lo dejo asi para que que no joda jajaj

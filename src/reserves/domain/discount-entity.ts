@@ -6,6 +6,10 @@ export class DiscountEntity {
     constructor(id: string, name: string, percentage: number){
         this.id = id;
         this.name = name;
-        this.percentage = percentage
+        this.percentage = percentage;
+    }
+
+    setId(id: string){
+        this.id = id;
     }
 }

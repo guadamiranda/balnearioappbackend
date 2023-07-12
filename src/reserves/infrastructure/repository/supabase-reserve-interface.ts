@@ -45,4 +45,42 @@ export class SupaBaseRepositoryReserve implements IRepositoryReserve {
             console.log('Error: ',error)
         }
     }
+
+    async createDiscount(discountEntity: DiscountEntity): Promise<DiscountEntity> { 
+        const repository = this.supabaseRepository.getConnection()
+        try {
+            const { data: discountQuery, error } = await repository
+                .from('Discounts')
+                .insert({name: discountEntity.name, percentage: discountEntity.percentage})
+                .select()
+            
+            if(error){
+                console.log(error)
+            }
+            
+            discountEntity.setId(discountQuery[0].id)
+            return discountEntity
+        } catch (error) {
+            console.log('Error: ',error)
+        }
+    }
+
+    async createPrice(priceEntity: PriceEntity): Promise<PriceEntity> { 
+        const repository = this.supabaseRepository.getConnection()
+        try {
+            const { data: priceQuery, error } = await repository
+                .from('Prices')
+                .insert({name: priceEntity.name, amount: priceEntity.amount})
+                .select()
+            
+            if(error){
+                console.log(error)
+            }
+
+            priceEntity.setId(priceQuery[0].id)
+            return priceEntity
+        } catch (error) {
+            console.log('Error: ',error)
+        }
+    }
 }

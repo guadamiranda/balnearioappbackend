@@ -6,6 +6,10 @@ export class PriceEntity {
     constructor(id: string, name: string, amount: number){
         this.id = id;
         this.name = name;
-        this.amount = amount
+        this.amount = amount;
+    }
+
+    setId(id: string) {
+        this.id = id;
     }
 }
