@@ -83,4 +83,40 @@ export class SupaBaseRepositoryReserve implements IRepositoryReserve {
             console.log('Error: ',error)
         }
     }
+
+    async updatePrice(priceEntity: PriceEntity): Promise<PriceEntity> { 
+        const repository = this.supabaseRepository.getConnection()
+        try {
+            const { error } = await repository
+                .from('Prices')
+                .update({name: priceEntity.name ,amount: priceEntity.amount})
+                .eq('id', priceEntity.id)
+                .select()
+            
+            if(!error) console.log(error)
+            
+            return priceEntity
+        } catch (error) {
+            console.log('Error: ',error)
+        }
+    }
+
+    async deletePrice(id: string): Promise<boolean> { 
+        const repository = this.supabaseRepository.getConnection()
+        try {
+            const { error } = await repository
+                .from('Prices')
+                .delete()
+                .eq('id', id)
+            
+            if(!error) {
+                console.log(error)
+                return false
+            }
+            
+            return true
+        } catch (error) {
+            console.log('Error: ',error)
+        }
+    }
 }

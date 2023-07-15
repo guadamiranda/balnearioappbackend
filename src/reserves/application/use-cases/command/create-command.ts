@@ -1,6 +1,5 @@
 import { ResidentsReserve, VehiclesReserve } from "../../../infrastructure/handlers/dto/request/reserve-create-request.dto"
 
-
 export class CreateCommand {
     idEmploye: string;
     initDate: string;
