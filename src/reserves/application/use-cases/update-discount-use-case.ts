@@ -12,7 +12,6 @@ export class UpdateDiscountUseCase implements IUpdateDiscountUseCase {
     async execute(updateDiscountCommand: UpdateDiscountCommand) : Promise<DiscountEntity> {
         const {id, name, percentage} = updateDiscountCommand
         const discountEntity = new DiscountEntity(id, name, percentage)
-        console.log(discountEntity)
         return await this.reserveRepository.updateDiscount(discountEntity)
     }
 }

@@ -14,7 +14,6 @@ export class SupaBaseRepositoryUser implements IRepositoryUsers {
             .from('Roles')
             .select('*')
     
-            console.log(data)
             if(error){
                 console.log(error)
             }
