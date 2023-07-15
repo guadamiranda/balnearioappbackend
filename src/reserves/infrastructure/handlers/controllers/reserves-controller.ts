@@ -55,10 +55,6 @@ export class ReservesController {
     return 
   }
 
-  @Get(RESERVE_PRICES_PATH)
-  async getPrices(): Promise<PriceEntity[]> {
-    return await this.getPricesUseCase.execute()
-  }
 
   @Put(RESERVE_PUT_PRICES_PATH)
   async updatePrice(@Headers() headers: any, @Param('id') id: string, @Body() body: ReserveCreatePriceBodyDto): Promise<PriceEntity> {
@@ -74,6 +70,10 @@ export class ReservesController {
     return await this.deletePriceUseCase.execute(deletePriceCommand)
   }
 
+  @Get(RESERVE_PRICES_PATH)
+  async getPrices(): Promise<PriceEntity[]> {
+    return await this.getPricesUseCase.execute()
+  }
 
   @Post(RESERVE_PRICES_PATH)
   async createPrice(@Headers() headers: any, @Body() body: ReserveCreatePriceBodyDto): Promise<PriceEntity> {
