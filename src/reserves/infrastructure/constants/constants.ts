@@ -1,3 +1,5 @@
+export const RESERVE_DELETE_DISCOUNT_PATH = '/discount/:id'
+export const RESERVE_PUT_DISCOUNT_PATH = '/discount/:id'
 export const RESERVE_DELETE_PRICES_PATH = '/price/:id'
 export const RESERVE_CONTROLLER_BASE_PATH = 'reserve'
 export const RESERVE_PUT_PRICES_PATH = '/price/:id'

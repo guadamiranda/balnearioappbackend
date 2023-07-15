@@ -1,4 +1,6 @@
 import { ICreateDiscountUseCase } from './application/use-cases/create-discount-use-case-interface';
+import { IUpdateDiscountUseCase } from './application/use-cases/update-discount-use-case-interface';
+import { IDeleteDiscountUseCase } from './application/use-cases/delete-discount-use-case-interface';
 import { SupaBaseRepositoryReserve } from './infrastructure/repository/supabase-reserve-interface';
 import { IRepositoryConnection } from '../shared/infrastructure/connection/repository-connection';
 import { IGetDiscountsUseCase } from './application/use-cases/get-discounts-use-case-interface';
@@ -10,6 +12,8 @@ import { IUpdatePriceUseCase } from './application/use-cases/update-price-use-ca
 import { IDeletePriceUseCase } from './application/use-cases/delete-price-use-case-interface';
 import { IGetPricesUseCase } from './application/use-cases/get-prices-use-case-interface';
 import { CreateDiscountUseCase } from './application/use-cases/create-discount-use-case';
+import { UpdateDiscountUseCase } from './application/use-cases/update-discount-use-case';
+import { DeleteDiscountUseCase } from './application/use-cases/delete-discount-use-case';
 import { GetDiscountsUseCase } from './application/use-cases/get-discounts-use-case';
 import { CreatePriceUseCase } from './application/use-cases/create-price-use-case';
 import { UpdatePriceUseCase } from './application/use-cases/update-price-use-case';
@@ -22,6 +26,8 @@ import { Module } from '@nestjs/common';
     providers: [
         {provide: IRepositoryReserve, useClass: SupaBaseRepositoryReserve},
         {provide: ICreateDiscountUseCase, useClass: CreateDiscountUseCase},
+        {provide: IUpdateDiscountUseCase, useClass: UpdateDiscountUseCase},
+        {provide: IDeleteDiscountUseCase, useClass: DeleteDiscountUseCase},
         {provide: IRepositoryConnection, useClass: SupabaseConnection},
         {provide: IGetDiscountsUseCase, useClass: GetDiscountsUseCase},
         {provide: ICreatePriceUseCase, useClass: CreatePriceUseCase},
@@ -30,6 +36,8 @@ import { Module } from '@nestjs/common';
         {provide: IGetPricesUseCase, useClass: GetPricesUseCase},
     ],
     exports:[
+        IUpdateDiscountUseCase,
+        IDeleteDiscountUseCase,
         ICreateDiscountUseCase,
         IGetDiscountsUseCase,
         ICreatePriceUseCase,
