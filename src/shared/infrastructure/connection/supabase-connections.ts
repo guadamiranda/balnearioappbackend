@@ -21,6 +21,7 @@ export class SupabaseConnection implements IRepositoryConnection {
     }
 
     getConnection () {
+        if(!this.supaBaseInstance) this.createConnection();
         return this.supaBaseInstance;
     }
 }

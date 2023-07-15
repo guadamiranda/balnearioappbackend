@@ -77,7 +77,7 @@ export class ReservesController {
   }
 
   @Delete(RESERVE_DELETE_PRICES_PATH)
-  async deletePrice(@Headers() headers: any, @Param('id') id: string, @Body() body: ReserveCreatePriceBodyDto): Promise<ReserveDeletePriceResponseDto | null> {
+  async deletePrice(@Headers() headers: any, @Param('id') id: string): Promise<ReserveDeletePriceResponseDto | null> {
     const deletePriceCommand = new DeletePriceCommand(id)
     return await this.deletePriceUseCase.execute(deletePriceCommand)
   }
@@ -105,7 +105,7 @@ export class ReservesController {
   }
 
   @Delete(RESERVE_DELETE_DISCOUNT_PATH)
-  async deleteDiscount(@Headers() headers: any, @Param('id') id: string, @Body() body: ReserveCreateDiscountBodyDto): Promise<ReserveDeleteDiscountResponseDto | null> {
+  async deleteDiscount(@Headers() headers: any, @Param('id') id: string): Promise<ReserveDeleteDiscountResponseDto | null> {
     const deleteDiscountCommand = new DeleteDiscountCommand(id)
     return await this.deleteDiscountUseCase.execute(deleteDiscountCommand)
   }

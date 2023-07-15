@@ -1,2 +1,5 @@
 export const USER_CONTROLLER_BASE_PATH = 'user'
+export const UPDATE_ROLE_PATH = '/role/:id'
+export const DELETE_ROLE_PATH = '/role/:id'
 export const USER_POST_PATH = '/'
+export const ROLE_PATH = '/role'
