@@ -9,7 +9,8 @@ const BASE_PATH = 'balneario/api'
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   app.setGlobalPrefix(BASE_PATH);
-  app.get(IRepositoryConnection).createConnection()
+  app.get(IRepositoryConnection).createConnection();
+  app.enableCors();
   app.useGlobalPipes(new ValidationPipe());
   await app.listen(PORT_SERVER, () => console.log(`Listening port: ${PORT_SERVER}`));
 }

@@ -22,8 +22,7 @@ export class SupaBaseRepositoryReserve implements IRepositoryReserve {
                 console.log(error)
             }
 
-            return priceQuery.map(price => new PriceEntity(price.id, price.name, price.price))
-            
+            return priceQuery.map(price => new PriceEntity(price.id, price.name, price.amount))
         } catch (error) {
             console.log('Error: ',error)
         }
