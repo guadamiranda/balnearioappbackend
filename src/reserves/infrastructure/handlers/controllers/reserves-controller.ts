@@ -20,6 +20,7 @@ import { ReserveCreateResponseDto } from '../dto/response/reserve-create-respons
 import { ReserveCreateRequestDto } from '../dto/request/reserve-create-request.dto';
 import { DiscountEntity } from '../../../domain/discount-entity';
 import { PriceEntity } from '../../../domain/price-entity';
+import { AdminGuard } from '../../../../shared/infrastructure/guards/admin-guard';
 import { 
     RESERVE_CONTROLLER_BASE_PATH,
     RESERVE_DELETE_PRICES_PATH,
@@ -40,7 +41,9 @@ import {
   Get, 
   Req, 
   Put,
+  UseGuards,
 } from '@nestjs/common';
+import { EmployeGuard } from 'src/shared/infrastructure/guards/employe-guard';
 
 
 @Controller(RESERVE_CONTROLLER_BASE_PATH)
@@ -63,11 +66,13 @@ export class ReservesController {
     return 
   }
 
+  @UseGuards(EmployeGuard)
   @Get(RESERVE_PRICES_PATH)
   async getPrices(): Promise<PriceEntity[]> {
     return await this.getPricesUseCase.execute()
   }
 
+  @UseGuards(AdminGuard)
   @Put(RESERVE_PUT_PRICES_PATH)
   async updatePrice(@Headers() headers: any, @Param('id') id: string, @Body() body: ReserveCreatePriceBodyDto): Promise<PriceEntity> {
     const updatePriceCommand = new UpdatePriceCommand(
@@ -76,12 +81,14 @@ export class ReservesController {
     return await this.updatePriceUseCase.execute(updatePriceCommand)
   }
 
+  @UseGuards(AdminGuard)
   @Delete(RESERVE_DELETE_PRICES_PATH)
   async deletePrice(@Headers() headers: any, @Param('id') id: string): Promise<ReserveDeletePriceResponseDto | null> {
     const deletePriceCommand = new DeletePriceCommand(id)
     return await this.deletePriceUseCase.execute(deletePriceCommand)
   }
 
+  @UseGuards(AdminGuard)
   @Post(RESERVE_PRICES_PATH)
   async createPrice(@Headers() headers: any, @Body() body: ReserveCreatePriceBodyDto): Promise<PriceEntity> {
     const createDiscountCommand = new CreatePriceCommand(
@@ -91,11 +98,13 @@ export class ReservesController {
     return await this.createPriceUseCase.execute(createDiscountCommand)
   }
 
+  @UseGuards(EmployeGuard)
   @Get(RESERVE_DISCOUNT_PATH)
   async getDiscounts(): Promise<DiscountEntity[]> {
     return await this.getDiscountsUseCase.execute()
   }
 
+  @UseGuards(AdminGuard)
   @Put(RESERVE_PUT_DISCOUNT_PATH)
   async updateDiscount(@Headers() headers: any, @Param('id') id: string, @Body() body: ReserveCreateDiscountBodyDto): Promise<DiscountEntity> {
     const updateDiscountCommand = new UpdateDiscountCommand(
@@ -104,12 +113,14 @@ export class ReservesController {
     return await this.updateDiscountUseCase.execute(updateDiscountCommand)
   }
 
+  @UseGuards(AdminGuard)
   @Delete(RESERVE_DELETE_DISCOUNT_PATH)
   async deleteDiscount(@Headers() headers: any, @Param('id') id: string): Promise<ReserveDeleteDiscountResponseDto | null> {
     const deleteDiscountCommand = new DeleteDiscountCommand(id)
     return await this.deleteDiscountUseCase.execute(deleteDiscountCommand)
   }
 
+  @UseGuards(AdminGuard)
   @Post(RESERVE_DISCOUNT_PATH)
   async createDiscount(@Headers() headers: any, @Body() body: ReserveCreateDiscountBodyDto): Promise<DiscountEntity> {
     const createDiscountCommand = new CreateDiscountCommand(
