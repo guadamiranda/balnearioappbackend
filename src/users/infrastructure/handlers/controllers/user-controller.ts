@@ -1,3 +1,4 @@
+
 import { IUpdateRoleUseCase } from 'src/users/application/update-role-use-case-interface';
 import { IDeleteRoleUseCase } from 'src/users/application/delete-role-use-case-interface';
 import { ICreateRoleUseCase } from 'src/users/application/create-role-use-case-interface';
@@ -5,13 +6,13 @@ import { UpdateRoleCommand } from 'src/users/application/commands/update-role-co
 import { DeleteRoleCommand } from 'src/users/application/commands/delete-role-command';
 import { IGetRolesUseCase } from 'src/users/application/get-roles-use-case-interface';
 import { CreateRoleCommand } from '../../../application/commands/create-role-command';
-import { AdminGuard } from '../../../../shared/infrastructure/guards/admin-guard';
 import { EmployeGuard } from '../../../../shared/infrastructure/guards/employe-guard';
-import { UserCreateResponseDto } from '../dto/response/user-create-response.dto';
+import { AdminGuard } from '../../../../shared/infrastructure/guards/admin-guard';
 import { DeleteRoleResponseDto } from '../dto/response/delete-role-response.dto';
-import { UserCreateRequestDto } from '../dto/request/user-create-request.dto';
 import { CreateRoleRequestDto } from '../dto/request/create-role-request.dto';
+import { IAuthUseCase } from 'src/users/application/auth-use-case-interface';
 import { UpdateRoleBodyDto } from '../dto/request/update-role-request.dto';
+import { UserAuthBodyDto } from '../dto/request/user-auth-request.dto';
 import { RoleEntity } from 'src/users/domain/role-entity';
 import { 
   Controller,
@@ -33,6 +34,11 @@ import {
   UPDATE_ROLE_PATH,
   USER_AUTHENTICATE_PATH,
 } from '../../constants/constants'
+import { AuthCommand } from 'src/users/application/commands/auth-command';
+import { HttpException, HttpStatus } from '@nestjs/common';
+import { AuthReponseDto } from '../dto/response/auth-response.dto';
+import { AuthEntity } from 'src/users/domain/auth-entity';
+
 
 @Controller(USER_CONTROLLER_BASE_PATH)
 export class UserController {
@@ -41,6 +47,7 @@ export class UserController {
     private readonly deleteRoleUseCase: IDeleteRoleUseCase,
     private readonly createRoleUseCase: ICreateRoleUseCase,
     private readonly getRoleUseCase: IGetRolesUseCase,
+    private readonly authUseCase: IAuthUseCase,
   ) {}
 
   @UseGuards(AdminGuard)
@@ -75,12 +82,13 @@ export class UserController {
   }
 
   @Post(USER_AUTHENTICATE_PATH)
-  userAuthenticate(@Req() req: UserCreateRequestDto): Promise<UserCreateResponseDto> {
-    const SECRETJWT = "ZdIpYY4saZIzK16xC3VgfDCWIUhYU7wz+0uasyZm90JxmVgGgMEyInAOomb1XgcbCBilGPFuXeBe5T3poceFVg=="
-    return new Promise<UserCreateResponseDto>((resolve, reject) => {
-      const response = new UserCreateResponseDto('40415923','alibaba@hotmail.com', 'Joni', 'test', '43');
-      // Aquí puedes realizar cualquier lógica adicional necesaria antes de resolver la promesa
-      resolve(response);
-    });
+  async userAuthenticate(@Body() body: UserAuthBodyDto): Promise<AuthEntity | null> {
+    const authReponse = await this.authUseCase.execute(new AuthCommand(body.email, body.password));
+
+    console.log(authReponse)
+    if(authReponse) {
+      return authReponse
+    }
+    throw new HttpException('InvalidUser', HttpStatus.NOT_FOUND)
   }
 }

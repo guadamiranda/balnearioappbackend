@@ -10,18 +10,21 @@ import { IGetRolesUseCase } from './application/get-roles-use-case-interface';
 import { CreateRoleUseCase } from './application/create-role-use-case';
 import { UpdateRoleUseCase } from './application/update-role-use-case';
 import { DeleteRoleUseCase } from './application/delete-role-use-case';
+import { IAuthUseCase } from './application/auth-use-case-interface';
 import { GetRolesUseCase } from './application/get-roles-use-case';
+import { AuthUseCase } from './application/auth-use-case';
 import { Module } from '@nestjs/common';
 
 @Module({
     controllers: [UserController],
     providers:[
         {provide: IRepositoryConnection, useClass: SupabaseConnection},
-        {provide: IRepositoryUsers, useClass:SupaBaseRepositoryUser},
-        {provide: ICreateRoleUseCase, useClass:CreateRoleUseCase},
-        {provide: IDeleteRoleUseCase, useClass:DeleteRoleUseCase},
-        {provide: IUpdateRoleUseCase, useClass:UpdateRoleUseCase},
-        {provide: IGetRolesUseCase, useClass:GetRolesUseCase},
+        {provide: IRepositoryUsers, useClass: SupaBaseRepositoryUser},
+        {provide: ICreateRoleUseCase, useClass: CreateRoleUseCase},
+        {provide: IDeleteRoleUseCase, useClass: DeleteRoleUseCase},
+        {provide: IUpdateRoleUseCase, useClass: UpdateRoleUseCase},
+        {provide: IGetRolesUseCase, useClass: GetRolesUseCase},
+        {provide: IAuthUseCase, useClass: AuthUseCase},
     ],
     exports: [
         IRepositoryConnection,
@@ -30,6 +33,7 @@ import { Module } from '@nestjs/common';
         IUpdateRoleUseCase,
         IRepositoryUsers,
         IGetRolesUseCase,
+        IAuthUseCase,
     ]
 })
 export class UsersModule {}
