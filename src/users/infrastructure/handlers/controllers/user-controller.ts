@@ -85,7 +85,6 @@ export class UserController {
   async userAuthenticate(@Body() body: UserAuthBodyDto): Promise<AuthEntity | null> {
     const authReponse = await this.authUseCase.execute(new AuthCommand(body.email, body.password));
 
-    console.log(authReponse)
     if(authReponse) {
       return authReponse
     }
