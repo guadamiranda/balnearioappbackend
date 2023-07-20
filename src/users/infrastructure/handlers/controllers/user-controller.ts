@@ -88,6 +88,6 @@ export class UserController {
     if(authReponse) {
       return authReponse
     }
-    throw new HttpException('InvalidUser', HttpStatus.NOT_FOUND)
+    throw new HttpException('InvalidUser', HttpStatus.UNAUTHORIZED)
   }
 }
