@@ -7,7 +7,7 @@ export class AdminGuard implements CanActivate {
     const roleId = request.headers['x-role-id'];
 
     if (!roleId) {
-      throw new HttpException('El header x-role-id no se ha proporcionado.', HttpStatus.BAD_REQUEST);
+      throw new HttpException('The header x-role-id has not been provided', HttpStatus.BAD_REQUEST);
     }
 
     //Este es el id del administrador Admin

@@ -1,4 +1,5 @@
 import { IRepositoryUsers } from "../infrastructure/repository/repository_user_interface";
+import { WorkshiftEntity } from "../domain/workshift-entity";
 import { IAuthUseCase } from "./auth-use-case-interface";
 import { AuthCommand } from './commands/auth-command';
 import { AuthEntity } from "../domain/auth-entity";
@@ -14,8 +15,18 @@ export class AuthUseCase implements IAuthUseCase {
         const roles = await this.userRepository.getRoles();
         const employeRole = roles.find(role => role.id == employe.roleId)
 
+        const todayUnix = new Date().getTime()
+        const workshiftEntity = new WorkshiftEntity().init(todayUnix, employe.id)
+        await this.userRepository.initWorkshift(workshiftEntity)
+
         if(!employe) return null
         
-        return new AuthEntity(employe.roleId, employeRole.name, employe.firstName, employe.lastName, 'worshiftId')
+        return new AuthEntity (
+            employe.roleId, 
+            employeRole.name, 
+            employe.firstName, 
+            employe.lastName, 
+            workshiftEntity.id
+        )
     }
 }

@@ -1,5 +1,6 @@
 import { IRepositoryConnection } from "../../../shared/infrastructure/connection/repository-connection";
-import { IRepositoryUsers } from "./repository_user_interface"; 
+import { WorkshiftEntity } from "src/users/domain/workshift-entity";
+import { IRepositoryUsers } from "./repository_user_interface";
 import { RoleEntity } from "../../domain/role-entity";
 import { UserEntity } from "../../domain/user-entity";
 import { Injectable } from "@nestjs/common";
@@ -7,7 +8,9 @@ import {
     EMPLOYES_NAME,
     ROLES_NAME,
     USERS_NAME,
+    WORKSHIFTS_NAME,
 } from "./constants/tableNames";
+
 
 @Injectable()
 export class SupaBaseRepositoryUser implements IRepositoryUsers {
@@ -28,6 +31,7 @@ export class SupaBaseRepositoryUser implements IRepositoryUsers {
 
             if(employe.length) {
                 return new UserEntity(
+                    employe[0].id,
                     employe[0].dni,
                     employe[0].first_name,
                     employe[0].last_name,
@@ -108,6 +112,47 @@ export class SupaBaseRepositoryUser implements IRepositoryUsers {
             if(!error) console.log(error)
             
             return roleEntity
+        } catch (error) {
+            console.log('Error: ',error)
+        }
+    }
+
+    async initWorkshift(workshiftEntity: WorkshiftEntity): Promise<WorkshiftEntity | boolean> {
+        const repository = this.supabaseRepository.getConnection()
+        try {
+            const { data: worksfhitQuery ,error } = await repository
+                .from(WORKSHIFTS_NAME)
+                .insert({init_date: new Date(workshiftEntity.initDate).toISOString(), employe_id: workshiftEntity.employeId})
+                .select()
+            
+            if(error) {
+                console.log(error) 
+                return false
+            }
+            
+            workshiftEntity.setId(worksfhitQuery[0].id)
+            return workshiftEntity
+        } catch (error) {
+            console.log('Error: ',error)
+        }
+    }
+
+    async finishWorkshift(workshiftId: string, observation: string): Promise<boolean> {
+        const todayUnix = new Date().toISOString()
+        const repository = this.supabaseRepository.getConnection()
+        try {
+            const { error } = await repository
+                .from(WORKSHIFTS_NAME)
+                .update({finish_date: todayUnix, observations: observation})
+                .eq('id', workshiftId)
+                .select()
+            
+            if(error) {
+                console.log(error)
+                return false
+            } 
+            
+            return true
         } catch (error) {
             console.log('Error: ',error)
         }
