@@ -5,7 +5,6 @@ export class EmployeGuard implements CanActivate {
   canActivate(context: ExecutionContext): boolean {
     const request = context.switchToHttp().getRequest();
     const roleId = request.headers['x-role-id'];
-    
     if (!roleId) {
       throw new HttpException('El header x-role-id no se ha proporcionado.', HttpStatus.BAD_REQUEST);
     }
