@@ -76,7 +76,7 @@ export class SupaBaseRepositoryUser implements IRepositoryUsers {
                 .delete()
                 .eq('id', id)
             
-            if(!error) {
+            if(error) {
                 console.log(error)
                 return false
             }
