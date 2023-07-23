@@ -12,15 +12,16 @@ export class AuthUseCase implements IAuthUseCase {
     ) {}
     async execute(authCommand: AuthCommand): Promise<AuthEntity | null> {
         const employe = await this.userRepository.authUser(authCommand.email, authCommand.password)
+        if(!employe) return null
+
         const roles = await this.userRepository.getRoles();
+
         const employeRole = roles.find(role => role.id == employe.roleId)
 
         const todayUnix = new Date().getTime()
         const workshiftEntity = new WorkshiftEntity().init(todayUnix, employe.id)
         await this.userRepository.initWorkshift(workshiftEntity)
 
-        if(!employe) return null
-        
         return new AuthEntity (
             employe.roleId, 
             employeRole.name, 
