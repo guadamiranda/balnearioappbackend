@@ -20,6 +20,7 @@ import { GetRolesUseCase } from './application/get-roles-use-case';
 import { IGetUseCase } from './application/get-use-case-interface';
 import { CreateUseCase } from './application/create-use-case';
 import { DeleteUseCase } from './application/delete-use-case';
+import { UpdateUseCase } from './application/update-use-case';
 import { AuthUseCase } from './application/auth-use-case';
 import { GetUseCase } from './application/get-use-case';
 import { Module } from '@nestjs/common';
@@ -36,6 +37,7 @@ import { Module } from '@nestjs/common';
         {provide: IGetRolesUseCase, useClass: GetRolesUseCase},
         {provide: IDeleteUseCase, useClass: DeleteUseCase},
         {provide: ICreateUseCase, useClass: CreateUseCase},
+        {provide: IUpdateUseCase, useClass: UpdateUseCase},
         {provide: IAuthUseCase, useClass: AuthUseCase},
         {provide: IGetUseCase, useClass: GetUseCase},
     ],
