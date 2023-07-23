@@ -1,6 +1,6 @@
 import { IsString } from "class-validator";
 
-export class finishWorkshiftRequestDto {
+export class FinishWorkshiftRequestDto {
     @IsString()
     observations: string;
 }

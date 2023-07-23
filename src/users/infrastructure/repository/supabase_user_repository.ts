@@ -18,6 +18,90 @@ export class SupaBaseRepositoryUser implements IRepositoryUsers {
         private readonly supabaseRepository: IRepositoryConnection
     ) {}
 
+    async createEmploye(userEntity: UserEntity, password: string): Promise<UserEntity> {
+        const repository = this.supabaseRepository.getConnection()
+        try {
+            const { data: employeQuery, error } = await repository
+                .from(EMPLOYES_NAME)
+                .insert({
+                    dni: userEntity.dni,
+                    first_name: userEntity.firstName,
+                    last_name: userEntity.lastName,
+                    email: userEntity.email,
+                    password: password,
+                    rol_type_id: userEntity.roleId,
+                })
+                .select()
+            
+            if(error){
+                console.log(error)
+            }
+
+            userEntity.setId(employeQuery[0].id)
+            return userEntity
+        } catch (error) {
+            console.log('Error: ',error)
+        }
+    }
+
+    async updateEmployes(userEntity: UserEntity): Promise<UserEntity> {
+        const repository = this.supabaseRepository.getConnection()
+        try {
+            const { error } = await repository
+                .from(EMPLOYES_NAME)
+                .update({
+                    dni: userEntity.dni,
+                    first_name: userEntity.firstName,
+                    last_name: userEntity.lastName,
+                    email: userEntity.email,
+                    password: userEntity.password,
+                    rol_type_id: userEntity.roleId,
+                })
+                .eq('id', userEntity.id)
+                .select()
+            
+            if(!error) console.log(error)
+            
+            return userEntity
+        } catch (error) {
+            console.log('Error: ',error)
+        }
+    }
+
+    async deleteEmploye(id: string): Promise<boolean> {
+        const repository = this.supabaseRepository.getConnection()
+        try {
+            const { error } = await repository
+                .from(EMPLOYES_NAME)
+                .delete()
+                .eq('id', id)
+            
+            if(!error) {
+                console.log(error)
+                return false
+            }
+            
+            return true
+        } catch (error) {
+            console.log('Error: ',error)
+        }
+    }
+
+    async getEmployes(): Promise<UserEntity[]> {
+        const repository = this.supabaseRepository.getConnection()
+        try {
+            const { data: employesQuery, error } = await repository
+            .from(EMPLOYES_NAME)
+            .select('*')
+    
+            if(error) console.log(error)
+            
+            return employesQuery
+        } catch (error) {
+            console.log('Error: ',error)
+        }
+    }
+
     async authUser(email: string, password: string): Promise<UserEntity | null> {
         const repository = this.supabaseRepository.getConnection()
 

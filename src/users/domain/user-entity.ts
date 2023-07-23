@@ -3,6 +3,7 @@ export class UserEntity {
     dni: string;
     firstName: string;
     lastName: string;
+    password: string;
     email: string;
     roleId: string;
     userId: string;
@@ -19,5 +20,9 @@ export class UserEntity {
 
     setId(id:string) {
         this.id = id;
+    }
+
+    setPassword(password: string) {
+        this.password = password;
     }
 }
