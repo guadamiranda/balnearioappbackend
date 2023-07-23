@@ -53,8 +53,6 @@ import {
   USER_UPDATE_PATH,
 } from '../../constants/constants'
 
-
-
 @Controller(USER_CONTROLLER_BASE_PATH)
 export class UserController {
   constructor(

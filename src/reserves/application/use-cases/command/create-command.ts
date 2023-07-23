@@ -10,7 +10,9 @@ export class CreateCommand {
     managerDni: string;
     managerFirstName: string;
     managerLastName: string;
+    managerCardPlate: string;
     managerMemberNumber: string;
+    workshiftId: string;
   
     constructor(
         idEmploye: string,
@@ -22,7 +24,9 @@ export class CreateCommand {
         managerDni: string,
         managerFirstName: string,
         managerLastName: string,
-        managerMemberNumber: string
+        managerCardPlate: string,
+        managerMemberNumber: string,
+        workshiftId: string,
     ) {
         this.idEmploye = idEmploye;
         this.initDate = initDate;
@@ -33,7 +37,9 @@ export class CreateCommand {
         this.managerDni = managerDni;
         this.managerFirstName = managerFirstName;
         this.managerLastName = managerLastName;
+        this.managerCardPlate = managerCardPlate;
         this.managerMemberNumber = managerMemberNumber;
+        this.workshiftId = workshiftId;
     }
   }
   

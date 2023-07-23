@@ -1,2 +1,5 @@
 export const PRICES_NAME = 'Prices'
 export const DISCOUNTS_NAME = 'Discounts'
+export const RESERVES_NAME = 'Reserves'
+export const RESERVE_RESIDENTS_NAME = 'Reserve_Residents'
+export const RESERVE_VEHICLES_TYPE = 'Vehicles_type'
