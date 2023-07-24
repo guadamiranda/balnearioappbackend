@@ -96,7 +96,15 @@ export class SupaBaseRepositoryUser implements IRepositoryUsers {
     
             if(error) console.log(error)
             
-            return employesQuery
+            return employesQuery.map(employe => new UserEntity(
+                employe.id,
+                employe.dni,
+                employe.first_name,
+                employe.last_name,
+                employe.email,
+                employe.role_type_id,
+                employe.user_id
+            ))
         } catch (error) {
             console.log('Error: ',error)
         }
