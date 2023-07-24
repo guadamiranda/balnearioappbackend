@@ -120,7 +120,6 @@ export class SupaBaseRepositoryUser implements IRepositoryUsers {
             .eq('email', email, 'password', password)
     
             if(error) console.log(error)
-            console.log(employe)
             if(employe.length) {
                 return new UserEntity(
                     employe[0].id,
