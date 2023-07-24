@@ -96,15 +96,20 @@ export class SupaBaseRepositoryUser implements IRepositoryUsers {
     
             if(error) console.log(error)
             
-            return employesQuery.map(employe => new UserEntity(
-                employe.id,
-                employe.dni,
-                employe.first_name,
-                employe.last_name,
-                employe.email,
-                employe.role_type_id,
-                employe.user_id
-            ))
+            return employesQuery.map(employe => {
+                const userEntity = new UserEntity(
+                    employe.id,
+                    employe.dni,
+                    employe.first_name,
+                    employe.last_name,
+                    employe.email,
+                    employe.role_type_id,
+                    employe.user_id
+                )
+
+                userEntity.setPassword(employe.password)
+                return userEntity;
+            })
         } catch (error) {
             console.log('Error: ',error)
         }
