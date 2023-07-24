@@ -15,9 +15,9 @@ export class AuthUseCase implements IAuthUseCase {
         if(!employe) return null
 
         const roles = await this.userRepository.getRoles();
-
+        console.log(employe)
         const employeRole = roles.find(role => role.id == employe.roleId)
-
+        console.log(employeRole)
         const todayUnix = new Date().getTime()
         const workshiftEntity = new WorkshiftEntity().init(todayUnix, employe.id)
         await this.userRepository.initWorkshift(workshiftEntity)

@@ -29,7 +29,7 @@ export class SupaBaseRepositoryUser implements IRepositoryUsers {
                     last_name: userEntity.lastName,
                     email: userEntity.email,
                     password: password,
-                    rol_type_id: userEntity.roleId,
+                    role_type_id: userEntity.roleId,
                 })
                 .select()
             
@@ -55,7 +55,7 @@ export class SupaBaseRepositoryUser implements IRepositoryUsers {
                     last_name: userEntity.lastName,
                     email: userEntity.email,
                     password: userEntity.password,
-                    rol_type_id: userEntity.roleId,
+                    role_type_id: userEntity.roleId,
                 })
                 .eq('id', userEntity.id)
                 .select()
@@ -120,7 +120,7 @@ export class SupaBaseRepositoryUser implements IRepositoryUsers {
             .eq('email', email, 'password', password)
     
             if(error) console.log(error)
-
+            console.log(employe)
             if(employe.length) {
                 return new UserEntity(
                     employe[0].id,
@@ -128,7 +128,7 @@ export class SupaBaseRepositoryUser implements IRepositoryUsers {
                     employe[0].first_name,
                     employe[0].last_name,
                     employe[0].email,
-                    employe[0].rol_type_id,
+                    employe[0].role_type_id,
                     employe[0].user_account_id,
                 ) 
             }
