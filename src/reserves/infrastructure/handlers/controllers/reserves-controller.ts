@@ -16,11 +16,15 @@ import { ReserveDeletePriceResponseDto } from '../dto/response/reserve-delete-pr
 import { IGetPricesUseCase } from '../../../application/use-cases/get-prices-use-case-interface';
 import { CreatePriceCommand } from '../../../application/use-cases/command/create-price-command';
 import { ReserveCreatePriceBodyDto } from '../dto/request/reserve-create-price-request.dto';
+import { ICreateUseCase } from '../../../application/use-cases/create-use-case-interface';
 import { ReserveCreateResponseDto } from '../dto/response/reserve-create-response.dto';
-import { ReserveCreateRequestDto } from '../dto/request/reserve-create-request.dto';
-import { DiscountEntity } from '../../../domain/discount-entity';
-import { PriceEntity } from '../../../domain/price-entity';
+import { EmployeGuard } from '../../../../shared/infrastructure/guards/employe-guard';
+import { CreateCommand } from '../../../application/use-cases/command/create-command';
+import { ReserveCreateBodyDto } from '../dto/request/reserve-create-request.dto';
 import { AdminGuard } from '../../../../shared/infrastructure/guards/admin-guard';
+import { DiscountEntity } from '../../../domain/discount-entity';
+import { ReserveEntity } from '../../../domain/reserve-entity';
+import { PriceEntity } from '../../../domain/price-entity';
 import { 
     RESERVE_CONTROLLER_BASE_PATH,
     RESERVE_DELETE_PRICES_PATH,
@@ -42,8 +46,9 @@ import {
   Req, 
   Put,
   UseGuards,
+  HttpException,
+  HttpStatus,
 } from '@nestjs/common';
-import { EmployeGuard } from 'src/shared/infrastructure/guards/employe-guard';
 
 
 @Controller(RESERVE_CONTROLLER_BASE_PATH)
@@ -57,13 +62,31 @@ export class ReservesController {
     private readonly deletePriceUseCase: IDeletePriceUseCase,
     private readonly updatePriceUseCase: IUpdatePriceUseCase,
     private readonly getPricesUseCase: IGetPricesUseCase,
+    private readonly createUseCase: ICreateUseCase,
   ) {}
 
+  @UseGuards(EmployeGuard)
   @Post(RESERVE_POST_PATH)
   //FALTA EL RESPONSE DE DEFINIR
-  create(@Req() req: ReserveCreateRequestDto): ReserveCreateResponseDto {
+  async create(@Body() body: ReserveCreateBodyDto): Promise<ReserveCreateResponseDto> {
+    const createCommand = new CreateCommand(
+        body.initDate, 
+        body.finishDate,
+        body.residents,
+        body.vehicles,
+        body.price,
+        body.managerDni,
+        body.managerFirstName,
+        body.managerLastName, 
+        body.managerCardPlate, 
+        body.managerMemberNumber,
+        body.workshiftId,
+      )
+    const responseReserve = await this.createUseCase.execute(createCommand)
+    if(responseReserve) return ReserveCreateResponseDto.mapReserveEntity(responseReserve); 
 
-    return 
+    throw new HttpException('Error, something went wrong', HttpStatus.INTERNAL_SERVER_ERROR)
+    
   }
 
   @UseGuards(EmployeGuard)

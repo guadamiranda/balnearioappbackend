@@ -1,6 +1,6 @@
-import { ReserveCreateResponseDto } from "../../infrastructure/handlers/dto/response/reserve-create-response.dto";
+import { ReserveEntity } from "../../domain/reserve-entity";
 import { CreateCommand } from "./command/create-command";
 
 export abstract class ICreateUseCase {
-    abstract execute(createCommand: CreateCommand): Promise<ReserveCreateResponseDto>
+    abstract execute(createCommand: CreateCommand): Promise<ReserveEntity>
 }

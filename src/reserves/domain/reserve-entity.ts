@@ -1,5 +1,7 @@
-import { ResidentEntity } from "./resident-entity";
+import { ResidentEntity } from './resident-entity';
 import { VehicleEntity } from "./vehicle-entity";
+import { ResidentsReserve } from '../infrastructure/handlers/dto/request/reserve-create-request.dto';
+import { VehiclesReserve } from "../infrastructure/handlers/dto/request/reserve-create-request.dto";
 
 export class ReserveEntity {
     id: string;
@@ -39,13 +41,10 @@ export class ReserveEntity {
         this.managerCardPlate = managerCardPlate;
     }
 
-    setResidents(residents: ResidentEntity[], vehicles: VehicleEntity[]) {
-        this.residents = residents;
-        this.vehicles = vehicles;
+    setAllResidents(residents: ResidentsReserve[], vehicles: VehiclesReserve[]) {
+        this.residents = residents.map(resident => new ResidentEntity(resident.dni, resident.memberNumber));
+        this.vehicles = vehicles.map(vehicles => new VehicleEntity(vehicles.carPlate, vehicles.vehicleType));
     }
 
-
-    setId(id: string) {
-        this.id = id;
-    }
+    setId(id: string) { this.id = id; }
 }

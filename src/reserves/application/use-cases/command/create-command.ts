@@ -1,7 +1,6 @@
 import { ResidentsReserve, VehiclesReserve } from "../../../infrastructure/handlers/dto/request/reserve-create-request.dto"
 
 export class CreateCommand {
-    idEmploye: string;
     initDate: string;
     finishDate: string;
     residents: ResidentsReserve[];
@@ -15,7 +14,6 @@ export class CreateCommand {
     workshiftId: string;
   
     constructor(
-        idEmploye: string,
         initDate: string,
         finishDate: string,
         residents: ResidentsReserve[],
@@ -28,7 +26,6 @@ export class CreateCommand {
         managerMemberNumber: string,
         workshiftId: string,
     ) {
-        this.idEmploye = idEmploye;
         this.initDate = initDate;
         this.finishDate = finishDate;
         this.residents = residents;

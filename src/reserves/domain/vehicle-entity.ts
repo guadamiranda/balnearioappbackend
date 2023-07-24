@@ -1,10 +1,10 @@
 export class VehicleEntity {
     id: string;
-    cardPlate: string;
+    carPlate: string;
     typeVehicle: string;
 
-    constructor(cardPlate: string, typeVehicle: string) {
-        this.cardPlate = cardPlate;
+    constructor(carPlate: string, typeVehicle: string) {
+        this.carPlate = carPlate;
         this.typeVehicle = typeVehicle;
     }
 

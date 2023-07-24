@@ -13,7 +13,6 @@ export class UpdatePriceUseCase implements IUpdatePriceUseCase {
         
         const {id, name, amount} = updatePriceCommand
         const priceEntity = new PriceEntity(id, name, amount)
-        console.log(priceEntity)
         return await this.reserveRepository.updatePrice(priceEntity)
     }
 }

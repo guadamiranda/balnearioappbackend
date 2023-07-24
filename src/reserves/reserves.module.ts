@@ -1,7 +1,7 @@
 import { ICreateDiscountUseCase } from './application/use-cases/create-discount-use-case-interface';
 import { IUpdateDiscountUseCase } from './application/use-cases/update-discount-use-case-interface';
 import { IDeleteDiscountUseCase } from './application/use-cases/delete-discount-use-case-interface';
-import { SupaBaseRepositoryReserve } from './infrastructure/repository/supabase-reserve-interface';
+import { SupaBaseRepositoryReserve } from './infrastructure/repository/supabase-reserve';
 import { IRepositoryConnection } from '../shared/infrastructure/connection/repository-connection';
 import { IGetDiscountsUseCase } from './application/use-cases/get-discounts-use-case-interface';
 import { ReservesController } from './infrastructure/handlers/controllers/reserves-controller';
@@ -18,7 +18,9 @@ import { GetDiscountsUseCase } from './application/use-cases/get-discounts-use-c
 import { CreatePriceUseCase } from './application/use-cases/create-price-use-case';
 import { UpdatePriceUseCase } from './application/use-cases/update-price-use-case';
 import { DeletePriceUseCase } from './application/use-cases/delete-price-use-case';
+import { ICreateUseCase } from './application/use-cases/create-use-case-interface';
 import { GetPricesUseCase } from './application/use-cases/get-prices-use-case';
+import { CreateUseCase } from './application/use-cases/create-use-case';
 import { Module } from '@nestjs/common';
 
 @Module({
@@ -34,6 +36,7 @@ import { Module } from '@nestjs/common';
         {provide: IUpdatePriceUseCase, useClass: UpdatePriceUseCase},
         {provide: IDeletePriceUseCase, useClass: DeletePriceUseCase},
         {provide: IGetPricesUseCase, useClass: GetPricesUseCase},
+        {provide: ICreateUseCase, useClass: CreateUseCase},
     ],
     exports:[
         IUpdateDiscountUseCase,
@@ -45,6 +48,7 @@ import { Module } from '@nestjs/common';
         IUpdatePriceUseCase,
         IRepositoryReserve,
         IGetPricesUseCase,
+        ICreateUseCase,
     ]
 })
 export class ReservesModule {}

@@ -1,5 +1,5 @@
 import { IRepositoryConnection } from "../../../shared/infrastructure/connection/repository-connection";
-import { DISCOUNTS_NAME, PRICES_NAME, RESERVES_NAME, RESERVE_RESIDENTS_NAME, RESERVE_VEHICLES_TYPE } from './constants/tableNames';
+import { DISCOUNTS_NAME, PRICES_NAME, RESERVES_NAME, RESERVE_RESIDENTS_NAME, RESERVE_VEHICLES_NAME, RESERVE_VEHICLES_TYPE } from './constants/tableNames';
 import { IRepositoryReserve } from "./repository-reserve-interface";
 import { ResidentEntity } from "../../domain/resident-entity";
 import { DiscountEntity } from "../../domain/discount-entity";
@@ -15,6 +15,7 @@ export class SupaBaseRepositoryReserve implements IRepositoryReserve {
     ) {}
 
     private async createReserveResidents (residentsEntity: ResidentEntity[], reserveId: string): Promise<ResidentEntity[]> {
+        if(!residentsEntity.length) return residentsEntity;
         const repository = this.supabaseRepository.getConnection()
         const mappedResidents = residentsEntity.map(resident => 
             { 
@@ -41,12 +42,14 @@ export class SupaBaseRepositoryReserve implements IRepositoryReserve {
         }
     }
 
-    private async createVehiclesType (vehiclesType: VehicleEntity[], reserveId: string): Promise<VehicleEntity[]> {
+    private async createReserveVehicles (vehicleEntiy: VehicleEntity[], reserveId: string): Promise<VehicleEntity[]> {
+        if(!vehicleEntiy.length) return vehicleEntiy;
+        console.log(vehicleEntiy)
         const repository = this.supabaseRepository.getConnection()
-        const mappedVehicles = vehiclesType.map(vehicle => 
+        const mappedVehicles = vehicleEntiy.map(vehicle => 
             { 
                 return {
-                    card_plate: vehicle.cardPlate,
+                    car_plate: vehicle.carPlate,
                     vehicle_type_id: vehicle.typeVehicle,
                     reserve_id: reserveId,
                 }
@@ -55,14 +58,16 @@ export class SupaBaseRepositoryReserve implements IRepositoryReserve {
 
         try {
             const { data: vehiclesQuery, error } = await repository
-                .from(RESERVE_VEHICLES_TYPE)
+                .from(RESERVE_VEHICLES_NAME)
                 .insert(mappedVehicles)
                 .select()
             
+            console.log(error)
+            console.log(vehiclesQuery)
             if(error) console.log(error)
             
-            vehiclesType.forEach((vehicle,index) => vehicle.setId(vehiclesQuery[index].id))
-            return vehiclesType
+            vehicleEntiy.forEach((vehicle,index) => vehicle.setId(vehiclesQuery[index].id))
+            return vehicleEntiy
         } catch (error) {
             console.log('Error: ',error)
         }
@@ -113,20 +118,26 @@ export class SupaBaseRepositoryReserve implements IRepositoryReserve {
                 .from(RESERVES_NAME)
                 .insert(
                     {
-                        init_date: new Date(reserveEntity.initDate).toISOString(),
-                        finish_date: new Date(reserveEntity.finishDate).toISOString(),
+                        init_date: new Date(parseInt(reserveEntity.initDate)).toISOString(),
+                        finish_date: new Date(parseInt(reserveEntity.finishDate)).toISOString(),
                         manager_dni: reserveEntity.managerDni,
                         manager_first_name: reserveEntity.managerFirstName,
                         manager_last_name: reserveEntity.managerLastName,
-                        manager_card_plate: reserveEntity.managerCardPlate,
-                        manager_memeber_number: reserveEntity.managerMemberNumber,
+                        manager_car_plate: reserveEntity.managerCardPlate,
+                        manager_member_number: reserveEntity.managerMemberNumber,
+                        price: reserveEntity.price, 
                         workshift_id: reserveEntity.workshiftId
                     })
                 .select()
-            
-            if(error) console.log(error)
-            
+            if(error) {
+                console.log(error)
+                return null;
+            }
             reserveEntity.setId(reserveQuery[0].id)
+
+            await this.createReserveResidents(reserveEntity.residents, reserveEntity.id)
+            await this.createReserveVehicles(reserveEntity.vehicles, reserveEntity.id)
+
             return reserveEntity
         } catch (error) {
             console.log('Error: ', error)
