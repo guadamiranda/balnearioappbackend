@@ -9,7 +9,7 @@ export class CreateCommand {
     managerDni: string;
     managerFirstName: string;
     managerLastName: string;
-    managerCardPlate: string;
+    managerCarPlate: string;
     managerMemberNumber: string;
     workshiftId: string;
   
@@ -22,7 +22,7 @@ export class CreateCommand {
         managerDni: string,
         managerFirstName: string,
         managerLastName: string,
-        managerCardPlate: string,
+        managerCarPlate: string,
         managerMemberNumber: string,
         workshiftId: string,
     ) {
@@ -34,7 +34,7 @@ export class CreateCommand {
         this.managerDni = managerDni;
         this.managerFirstName = managerFirstName;
         this.managerLastName = managerLastName;
-        this.managerCardPlate = managerCardPlate;
+        this.managerCarPlate = managerCarPlate;
         this.managerMemberNumber = managerMemberNumber;
         this.workshiftId = workshiftId;
     }

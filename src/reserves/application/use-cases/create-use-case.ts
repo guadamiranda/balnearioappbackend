@@ -15,7 +15,7 @@ export class CreateUseCase implements ICreateUseCase {
         const { 
             finishDate, 
             initDate, 
-            managerCardPlate, 
+            managerCarPlate, 
             managerDni, 
             managerFirstName,
             managerLastName,
@@ -33,7 +33,7 @@ export class CreateUseCase implements ICreateUseCase {
             managerDni,
             managerFirstName,
             managerLastName,
-            managerCardPlate,
+            managerCarPlate,
             managerMemberNumber,
             price
         );

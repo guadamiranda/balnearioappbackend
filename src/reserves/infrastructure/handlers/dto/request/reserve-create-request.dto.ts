@@ -27,7 +27,7 @@ export class ReserveCreateBodyDto {
     @IsString()
     finishDate: string;
     @IsString()
-    managerCardPlate: string;
+    managerCarPlate: string;
     @IsNotEmpty()
     residents: ResidentsReserve[];
     @IsNotEmpty()

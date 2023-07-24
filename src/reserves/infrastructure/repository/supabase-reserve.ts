@@ -123,7 +123,7 @@ export class SupaBaseRepositoryReserve implements IRepositoryReserve {
                         manager_dni: reserveEntity.managerDni,
                         manager_first_name: reserveEntity.managerFirstName,
                         manager_last_name: reserveEntity.managerLastName,
-                        manager_car_plate: reserveEntity.managerCardPlate,
+                        manager_car_plate: reserveEntity.managerCarPlate,
                         manager_member_number: reserveEntity.managerMemberNumber,
                         price: reserveEntity.price, 
                         workshift_id: reserveEntity.workshiftId

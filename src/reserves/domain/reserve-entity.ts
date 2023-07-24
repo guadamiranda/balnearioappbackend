@@ -14,7 +14,7 @@ export class ReserveEntity {
     managerDni: string;
     managerFirstName: string;
     managerLastName: string;
-    managerCardPlate: string;
+    managerCarPlate: string;
     managerMemberNumber: string;
 
     constructor() {}
@@ -26,7 +26,7 @@ export class ReserveEntity {
         managerDni: string,
         managerFirstName: string,
         managerLastName: string,
-        managerCardPlate: string,
+        managerCarPlate: string,
         managerMemberNumber: string,
         price: number,
     ) {
@@ -38,7 +38,7 @@ export class ReserveEntity {
         this.managerFirstName = managerFirstName;
         this.managerLastName = managerLastName;
         this.managerMemberNumber = managerMemberNumber;
-        this.managerCardPlate = managerCardPlate;
+        this.managerCarPlate = managerCarPlate;
     }
 
     setAllResidents(residents: ResidentsReserve[], vehicles: VehiclesReserve[]) {

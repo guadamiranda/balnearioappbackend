@@ -78,7 +78,7 @@ export class ReservesController {
         body.managerDni,
         body.managerFirstName,
         body.managerLastName, 
-        body.managerCardPlate, 
+        body.managerCarPlate, 
         body.managerMemberNumber,
         body.workshiftId,
       )
