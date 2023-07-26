@@ -1,5 +1,5 @@
 import { IRepositoryConnection } from "../../../shared/infrastructure/connection/repository-connection";
-import { DISCOUNTS_NAME, PRICES_NAME, RESERVES_NAME, RESERVE_RESIDENTS_NAME, RESERVE_VEHICLES_NAME, RESERVE_VEHICLES_TYPE } from './constants/tableNames';
+import { ResidentsReserve, VehiclesReserve } from "../handlers/dto/request/reserve-create-request.dto";
 import { IRepositoryReserve } from "./repository-reserve-interface";
 import { ResidentEntity } from "../../domain/resident-entity";
 import { DiscountEntity } from "../../domain/discount-entity";
@@ -7,6 +7,16 @@ import { ReserveEntity } from "../../domain/reserve-entity";
 import { VehicleEntity } from '../../domain/vehicle-entity';
 import { PriceEntity } from "../../domain/price-entity";
 import { Injectable } from "@nestjs/common";
+import { 
+    DISCOUNTS_NAME, PRICES_NAME, 
+    RESERVES_NAME, 
+    RESERVE_RESIDENTS_NAME, 
+    RESERVE_VEHICLES_NAME, 
+    RESERVE_VEHICLES_TYPE 
+} from './constants/tableNames';
+import { ResidentsReserveSupabase } from "./dto/resident-reserve-supabase-dto";
+import { VehiclesReserveSupabase } from "./dto/vehicle-reserve-supabase-dto";
+
 
 @Injectable()
 export class SupaBaseRepositoryReserve implements IRepositoryReserve {
@@ -73,6 +83,31 @@ export class SupaBaseRepositoryReserve implements IRepositoryReserve {
         }
     }
 
+    private async getReserveResidents (idsReserves: string[]): Promise<ResidentsReserveSupabase[]> {
+        const repository = this.supabaseRepository.getConnection()
+        try {
+            const { data: reservesResidentQuery, error } = await repository
+                .from(RESERVE_RESIDENTS_NAME)
+                .select('*')
+                .in('reserve_id', idsReserves)
+
+            if(error) {
+                console.log(error)
+                return null
+            }
+
+            return reservesResidentQuery.map(resident => { 
+                return new ResidentsReserveSupabase(
+                    resident.dni,
+                    resident.member_number,
+                    resident.reserve_id
+                )
+            })
+
+        } catch (error) {
+            console.log('Error: ', error)
+        }
+    }
     private async deleteReserveResidents (reserveId: string): Promise<boolean> {
         const repository = this.supabaseRepository.getConnection()
         try {
@@ -167,33 +202,85 @@ export class SupaBaseRepositoryReserve implements IRepositoryReserve {
         }
     }
 
-    /*async getActivesReserves(): Promise<ReserveEntity[]> {
+    async getReserveVehicles(idsReserves: string[]): Promise<VehiclesReserveSupabase[]> {
+        const repository = this.supabaseRepository.getConnection()
+        try {
+            const { data: reservesVehicleQuery, error } = await repository
+                .from(RESERVE_VEHICLES_NAME)
+                .select('*')
+                .in('reserve_id', idsReserves)
+
+            if(error) {
+                console.log(error)
+                return null
+            }
+
+            return reservesVehicleQuery.map(vehicle => { 
+                return new VehiclesReserveSupabase(
+                    vehicle.car_plate,
+                    vehicle.vehicle_type_id,
+                    vehicle.reserve_id
+                )
+            })
+
+        } catch (error) {
+            console.log('Error: ', error)
+        }
+    }
+
+    async getActivesReserves(): Promise<ReserveEntity[]> {
         const repository = this.supabaseRepository.getConnection();
         const todayDate = new Date().toISOString();
         try {
-            const { data: reservesQuery ,error } = await repository
+            const { data: reservesQuery, error } = await repository
                 .from(RESERVES_NAME)
-                .delete()
+                .select('*')
                 .gt('finish_date', todayDate)
             
-            if(error) console.log(error)
+            if(error) {
+                console.log(error)
+                return null
+            } 
 
-            /*reservesQuery.map(reserve => new ReserveEntity(
-                reserve.workshift_id,
-                reserve.init_date,
-                reserve.finish_date,
-                reserve.manager_dni,
-                reserve.manager_first_name,
-                reserve.manager_last_name,
-                reserve.manager_card_plate,
-                reserve.manager_member_number,
-                
-            ))
-            return true
+            const reserves: ReserveEntity[] = reservesQuery.map(reserve => {
+                const reserveEntity = new ReserveEntity()
+                reserveEntity.setBasicValues(
+                    reserve.workshift_id,
+                    reserve.init_date,
+                    reserve.finish_date,
+                    reserve.manager_dni,
+                    reserve.manager_first_name,
+                    reserve.manager_last_name,
+                    reserve.manager_card_plate,
+                    reserve.manager_member_number,
+                    reserve.price,
+                )
+                reserveEntity.setId(reserve.id)
+
+                return reserveEntity;
+            })
+            
+            const reservesId = reserves.map(reserve => reserve.id);
+            const reserveResidents = await this.getReserveResidents(reservesId);
+            const reserveVehicles = await this.getReserveVehicles(reservesId);
+            console.log(reserveResidents)
+            console.log(reserveVehicles)
+            if(!reserveResidents || !reserveVehicles) {
+                console.log('ERROR EN OBTENCION DE RESIDENTES Y VEHICULOS')
+                return null
+            }
+
+            reserves.forEach(reserve => {
+               const residents = reserveResidents.filter(resident => resident.reserveId == reserve.id)
+               const vehicles = reserveVehicles.filter(vehicle => vehicle.reserveId == reserve.id)
+               reserve.setAllResidents(residents, vehicles);
+            });
+
+            return reserves;
         } catch (error) {
             console.log('Error: ',error)
         }
-    }*/
+    }
 
     async getPrices(): Promise<PriceEntity[]> { 
         const repository = this.supabaseRepository.getConnection()

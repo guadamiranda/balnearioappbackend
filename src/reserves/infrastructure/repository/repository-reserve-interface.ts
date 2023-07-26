@@ -9,10 +9,10 @@ export abstract class IRepositoryReserve {
     abstract update(reserveEntity: ReserveEntity): Promise<ReserveEntity>;
     abstract createPrice(priceEntity: PriceEntity): Promise<PriceEntity>;
     abstract updatePrice(PriceEntity: PriceEntity): Promise<PriceEntity>;
+    abstract getActivesReserves(): Promise<ReserveEntity[]>;
     abstract deleteDiscount(id: string): Promise<boolean>;
     abstract deletePrice(id: string): Promise<boolean>;
     abstract getDiscounts(): Promise<DiscountEntity[]>;
     abstract delete(id: string): Promise<boolean>;
     abstract getPrices(): Promise<PriceEntity[]>;
-    //abstract getActivesReserves(): Promise<ReserveEntity[]>;
 }

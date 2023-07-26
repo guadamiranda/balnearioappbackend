@@ -1,4 +1,4 @@
-import { ICreateDiscountUseCase } from 'src/reserves/application/use-cases/create-discount-use-case-interface';
+import { ICreateDiscountUseCase } from '../../../application/use-cases/create-discount-use-case-interface';
 import { IDeleteDiscountUseCase } from '../../../application/use-cases/delete-discount-use-case-interface';
 import { IUpdateDiscountUseCase } from '../../../application/use-cases/update-discount-use-case-interface';
 import { ICreatePriceUseCase } from 'src/reserves/application/use-cases/create-price-use-case-interface';
@@ -11,6 +11,7 @@ import { CreateDiscountCommand } from '../../../application/use-cases/command/cr
 import { DeleteDiscountCommand } from '../../../application/use-cases/command/delete-discount-command';
 import { UpdatePriceCommand } from 'src/reserves/application/use-cases/command/update-price-command';
 import { DeletePriceCommand } from 'src/reserves/application/use-cases/command/delete-price-command';
+import { IGetActivesReservesUseCase } from '../../../application/use-cases/get-use-case-interface';
 import { ReserveCreateDiscountBodyDto } from '../dto/request/reserve-create-discount-request.dto';
 import { ReserveDeletePriceResponseDto } from '../dto/response/reserve-delete-price-response.dto';
 import { IGetPricesUseCase } from '../../../application/use-cases/get-prices-use-case-interface';
@@ -33,7 +34,8 @@ import {
     RESERVE_PRICES_PATH,
     RESERVE_POST_PATH,
     RESERVE_DELETE_DISCOUNT_PATH,
-    RESERVE_PUT_DISCOUNT_PATH, 
+    RESERVE_PUT_DISCOUNT_PATH,
+    RESERVE_GET_ACTIVES_PATH, 
 } from '../../constants/constants';
 import { 
   Controller, 
@@ -51,9 +53,11 @@ import {
 } from '@nestjs/common';
 
 
+
 @Controller(RESERVE_CONTROLLER_BASE_PATH)
 export class ReservesController {
   constructor(
+    private readonly getActivesReservesUseCase: IGetActivesReservesUseCase,
     private readonly createDiscountUseCase: ICreateDiscountUseCase,
     private readonly deleteDiscountUseCase: IDeleteDiscountUseCase,
     private readonly updateDiscountUseCase: IUpdateDiscountUseCase,
@@ -151,5 +155,11 @@ export class ReservesController {
     )
 
     return await this.createDiscountUseCase.execute(createDiscountCommand)
+  }
+
+  @UseGuards(EmployeGuard)
+  @Get(RESERVE_GET_ACTIVES_PATH)
+  async getActiveReserve(): Promise<ReserveEntity[]> {
+    return await this.getActivesReservesUseCase.execute()
   }
 }
