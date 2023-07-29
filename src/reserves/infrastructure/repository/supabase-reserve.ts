@@ -1,5 +1,6 @@
 import { IRepositoryConnection } from "../../../shared/infrastructure/connection/repository-connection";
-import { ResidentsReserve, VehiclesReserve } from "../handlers/dto/request/reserve-create-request.dto";
+import { ResidentsReserveSupabase } from "./dto/resident-reserve-supabase-dto";
+import { VehiclesReserveSupabase } from "./dto/vehicle-reserve-supabase-dto";
 import { IRepositoryReserve } from "./repository-reserve-interface";
 import { ResidentEntity } from "../../domain/resident-entity";
 import { DiscountEntity } from "../../domain/discount-entity";
@@ -14,15 +15,59 @@ import {
     RESERVE_VEHICLES_NAME, 
     RESERVE_VEHICLES_TYPE 
 } from './constants/tableNames';
-import { ResidentsReserveSupabase } from "./dto/resident-reserve-supabase-dto";
-import { VehiclesReserveSupabase } from "./dto/vehicle-reserve-supabase-dto";
-
 
 @Injectable()
 export class SupaBaseRepositoryReserve implements IRepositoryReserve {
     constructor (
         private readonly supabaseRepository: IRepositoryConnection
     ) {}
+    async getSpecificReserve(dni: string, carPlate: string): Promise<ReserveEntity> {
+        const repository = this.supabaseRepository.getConnection()
+        try {
+            const { data: reserveQuery, error } = await repository
+                .from(RESERVES_NAME)
+                .select('*')
+                .or(`manager_car_plate.eq.${carPlate},manager_dni.eq.${dni}`)
+                .order('init_date', { ascending: false })
+                .limit(1);
+            
+            if(error) {
+                console.log(error)
+                return null
+            }
+
+            if(!reserveQuery.length) {
+                console.log('Not Found Error')
+                return null
+            }
+            
+            const reserveEntity = new ReserveEntity()
+            reserveEntity.setBasicValues(
+                reserveQuery[0].workshift_id,
+                reserveQuery[0].init_date,
+                reserveQuery[0].finish_date,
+                reserveQuery[0].manager_dni,
+                reserveQuery[0].manager_first_name,
+                reserveQuery[0].manager_last_name,
+                reserveQuery[0].manager_car_plate,
+                reserveQuery[0].manager_member_number,
+                reserveQuery[0].price
+            )
+
+            reserveEntity.setId(reserveQuery[0].id)
+            const reserveResidents = await this.getReserveResidents([reserveEntity.id])
+            const reserveVehicles = await this.getReserveVehicles([reserveEntity.id])
+
+            if(!reserveResidents || !reserveVehicles) {
+                console.log('ERROR EN OBTENCION DE RESIDENTES Y VEHICULOS')
+                return null
+            }
+            reserveEntity.setAllResidents(reserveResidents, reserveVehicles)
+            return reserveEntity
+        } catch (error) {
+            console.log('Error: ',error)
+        }
+    }
 
     private async createReserveResidents (residentsEntity: ResidentEntity[], reserveId: string): Promise<ResidentEntity[]> {
         if(!residentsEntity.length) return residentsEntity;
@@ -251,7 +296,7 @@ export class SupaBaseRepositoryReserve implements IRepositoryReserve {
                     reserve.manager_dni,
                     reserve.manager_first_name,
                     reserve.manager_last_name,
-                    reserve.manager_card_plate,
+                    reserve.manager_car_plate,
                     reserve.manager_member_number,
                     reserve.price,
                 )

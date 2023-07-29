@@ -1,7 +1,9 @@
+import { IGetSpecificReserveUseCase } from './application/use-cases/get-specific-reserve-use-case-interface';
 import { ICreateDiscountUseCase } from './application/use-cases/create-discount-use-case-interface';
 import { IUpdateDiscountUseCase } from './application/use-cases/update-discount-use-case-interface';
 import { IDeleteDiscountUseCase } from './application/use-cases/delete-discount-use-case-interface';
 import { IRepositoryConnection } from '../shared/infrastructure/connection/repository-connection';
+import { GetSpecificReserveUseCase } from './application/use-cases/get-specific-reserve-use-case';
 import { IGetDiscountsUseCase } from './application/use-cases/get-discounts-use-case-interface';
 import { ReservesController } from './infrastructure/handlers/controllers/reserves-controller';
 import { ICreatePriceUseCase } from './application/use-cases/create-price-use-case-interface';
@@ -28,6 +30,7 @@ import { Module } from '@nestjs/common';
 @Module({
     controllers: [ReservesController],
     providers: [
+        {provide: IGetSpecificReserveUseCase, useClass: GetSpecificReserveUseCase},
         {provide: IGetActivesReservesUseCase, useClass: GetActivesReservesUseCase},
         {provide: IRepositoryReserve, useClass: SupaBaseRepositoryReserve},
         {provide: ICreateDiscountUseCase, useClass: CreateDiscountUseCase},
@@ -42,6 +45,7 @@ import { Module } from '@nestjs/common';
         {provide: ICreateUseCase, useClass: CreateUseCase},
     ],
     exports:[
+        IGetSpecificReserveUseCase,
         IGetActivesReservesUseCase,
         IUpdateDiscountUseCase,
         IDeleteDiscountUseCase,

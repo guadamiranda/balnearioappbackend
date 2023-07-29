@@ -1,3 +1,4 @@
+import { IGetSpecificReserveUseCase } from '../../../application/use-cases/get-specific-reserve-use-case-interface';
 import { ICreateDiscountUseCase } from '../../../application/use-cases/create-discount-use-case-interface';
 import { IDeleteDiscountUseCase } from '../../../application/use-cases/delete-discount-use-case-interface';
 import { IUpdateDiscountUseCase } from '../../../application/use-cases/update-discount-use-case-interface';
@@ -18,11 +19,13 @@ import { IGetPricesUseCase } from '../../../application/use-cases/get-prices-use
 import { CreatePriceCommand } from '../../../application/use-cases/command/create-price-command';
 import { ReserveCreatePriceBodyDto } from '../dto/request/reserve-create-price-request.dto';
 import { ICreateUseCase } from '../../../application/use-cases/create-use-case-interface';
+import { GetSpecificCommand } from '../../../application/use-cases/command/get-specific';
 import { ReserveCreateResponseDto } from '../dto/response/reserve-create-response.dto';
 import { EmployeGuard } from '../../../../shared/infrastructure/guards/employe-guard';
 import { CreateCommand } from '../../../application/use-cases/command/create-command';
-import { ReserveCreateBodyDto } from '../dto/request/reserve-create-request.dto';
+import { SpecificReserveQueryDto } from '../dto/request/reserve-specific-request.dto';
 import { AdminGuard } from '../../../../shared/infrastructure/guards/admin-guard';
+import { ReserveCreateBodyDto } from '../dto/request/reserve-create-request.dto';
 import { DiscountEntity } from '../../../domain/discount-entity';
 import { ReserveEntity } from '../../../domain/reserve-entity';
 import { PriceEntity } from '../../../domain/price-entity';
@@ -35,7 +38,8 @@ import {
     RESERVE_POST_PATH,
     RESERVE_DELETE_DISCOUNT_PATH,
     RESERVE_PUT_DISCOUNT_PATH,
-    RESERVE_GET_ACTIVES_PATH, 
+    RESERVE_GET_ACTIVES_PATH,
+    RESERVE_BASE_PATH, 
 } from '../../constants/constants';
 import { 
   Controller, 
@@ -50,6 +54,7 @@ import {
   UseGuards,
   HttpException,
   HttpStatus,
+  Query,
 } from '@nestjs/common';
 
 
@@ -57,6 +62,7 @@ import {
 @Controller(RESERVE_CONTROLLER_BASE_PATH)
 export class ReservesController {
   constructor(
+    private readonly getSpecificReserveUseCase: IGetSpecificReserveUseCase,
     private readonly getActivesReservesUseCase: IGetActivesReservesUseCase,
     private readonly createDiscountUseCase: ICreateDiscountUseCase,
     private readonly deleteDiscountUseCase: IDeleteDiscountUseCase,
@@ -71,7 +77,6 @@ export class ReservesController {
 
   @UseGuards(EmployeGuard)
   @Post(RESERVE_POST_PATH)
-  //FALTA EL RESPONSE DE DEFINIR
   async create(@Body() body: ReserveCreateBodyDto): Promise<ReserveCreateResponseDto> {
     const createCommand = new CreateCommand(
         body.initDate, 
@@ -90,7 +95,6 @@ export class ReservesController {
     if(responseReserve) return ReserveCreateResponseDto.mapReserveEntity(responseReserve); 
 
     throw new HttpException('Error, something went wrong', HttpStatus.INTERNAL_SERVER_ERROR)
-    
   }
 
   @UseGuards(EmployeGuard)
@@ -161,5 +165,19 @@ export class ReservesController {
   @Get(RESERVE_GET_ACTIVES_PATH)
   async getActiveReserve(): Promise<ReserveEntity[]> {
     return await this.getActivesReservesUseCase.execute()
+  }
+
+  @UseGuards(EmployeGuard)
+  @Get(RESERVE_BASE_PATH)
+  async getSpecificReserve(@Query() queryParams: SpecificReserveQueryDto): Promise<ReserveEntity> {
+    if(!queryParams.dni && !queryParams.carplate) {
+      throw new HttpException('Should send at least one query param (dni or carplate)', HttpStatus.BAD_REQUEST)
+    }
+    const specificReserveCommand = new GetSpecificCommand(queryParams.dni, queryParams.carplate)
+    const specificReserve = await this.getSpecificReserveUseCase.execute(specificReserveCommand)
+
+    if(specificReserve) return specificReserve;
+    
+    throw new HttpException('Not found reserve', HttpStatus.NOT_FOUND)
   }
 }
