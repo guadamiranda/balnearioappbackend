@@ -22,9 +22,11 @@ import { CreatePriceUseCase } from './application/use-cases/create-price-use-cas
 import { UpdatePriceUseCase } from './application/use-cases/update-price-use-case';
 import { DeletePriceUseCase } from './application/use-cases/delete-price-use-case';
 import { ICreateUseCase } from './application/use-cases/create-use-case-interface';
+import { IDeleteUseCase } from './application/use-cases/delete-use-case-interface';
 import { GetActivesReservesUseCase } from './application/use-cases/get-use-case';
 import { GetPricesUseCase } from './application/use-cases/get-prices-use-case';
 import { CreateUseCase } from './application/use-cases/create-use-case';
+import { DeleteUseCase } from './application/use-cases/delete-use-case';
 import { Module } from '@nestjs/common';
 
 @Module({
@@ -43,6 +45,7 @@ import { Module } from '@nestjs/common';
         {provide: IDeletePriceUseCase, useClass: DeletePriceUseCase},
         {provide: IGetPricesUseCase, useClass: GetPricesUseCase},
         {provide: ICreateUseCase, useClass: CreateUseCase},
+        {provide: IDeleteUseCase, useClass: DeleteUseCase},
     ],
     exports:[
         IGetSpecificReserveUseCase,
@@ -57,6 +60,7 @@ import { Module } from '@nestjs/common';
         IRepositoryReserve,
         IGetPricesUseCase,
         ICreateUseCase,
+        IDeleteUseCase,
     ]
 })
 export class ReservesModule {}

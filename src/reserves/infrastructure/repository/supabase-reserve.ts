@@ -172,11 +172,11 @@ export class SupaBaseRepositoryReserve implements IRepositoryReserve {
         }
     }
 
-    private async deleteVehiclesType (reserveId: string): Promise<boolean> {
+    private async deleteReserveVehicles (reserveId: string): Promise<boolean> {
         const repository = this.supabaseRepository.getConnection()
         try {
             const { error } = await repository
-                .from(RESERVE_VEHICLES_TYPE)
+                .from(RESERVE_VEHICLES_NAME)
                 .delete()
                 .eq('reserve_id', reserveId)
             
@@ -231,6 +231,14 @@ export class SupaBaseRepositoryReserve implements IRepositoryReserve {
     async delete(id: string): Promise<boolean> {
         const repository = this.supabaseRepository.getConnection()
         try {
+            const isDeletedResidents = await this.deleteReserveResidents(id);
+            const isDeletedVehicles = await this.deleteReserveVehicles(id);
+
+            if(!isDeletedResidents || !isDeletedVehicles) {
+                console.log('ERROR EN LA ELIMINACION DE RESIDENTES Y VEHICULOS')
+                return null
+            }
+
             const { error } = await repository
                 .from(RESERVES_NAME)
                 .delete()

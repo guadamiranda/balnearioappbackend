@@ -19,11 +19,14 @@ import { IGetPricesUseCase } from '../../../application/use-cases/get-prices-use
 import { CreatePriceCommand } from '../../../application/use-cases/command/create-price-command';
 import { ReserveCreatePriceBodyDto } from '../dto/request/reserve-create-price-request.dto';
 import { ICreateUseCase } from '../../../application/use-cases/create-use-case-interface';
+import { IDeleteUseCase } from '../../../application/use-cases/delete-use-case-interface';
 import { GetSpecificCommand } from '../../../application/use-cases/command/get-specific';
 import { ReserveCreateResponseDto } from '../dto/response/reserve-create-response.dto';
+import { ReserveDeleteResponseDto } from '../dto/response/reserve-delete-response.dto';
 import { EmployeGuard } from '../../../../shared/infrastructure/guards/employe-guard';
 import { CreateCommand } from '../../../application/use-cases/command/create-command';
 import { SpecificReserveQueryDto } from '../dto/request/reserve-specific-request.dto';
+import { DeleteCommand } from '../../../application/use-cases/command/delete-command';
 import { AdminGuard } from '../../../../shared/infrastructure/guards/admin-guard';
 import { ReserveCreateBodyDto } from '../dto/request/reserve-create-request.dto';
 import { DiscountEntity } from '../../../domain/discount-entity';
@@ -39,7 +42,8 @@ import {
     RESERVE_DELETE_DISCOUNT_PATH,
     RESERVE_PUT_DISCOUNT_PATH,
     RESERVE_GET_ACTIVES_PATH,
-    RESERVE_BASE_PATH, 
+    RESERVE_BASE_PATH,
+    RESERVE_DELETE_PATH, 
 } from '../../constants/constants';
 import { 
   Controller, 
@@ -59,6 +63,8 @@ import {
 
 
 
+
+
 @Controller(RESERVE_CONTROLLER_BASE_PATH)
 export class ReservesController {
   constructor(
@@ -73,6 +79,7 @@ export class ReservesController {
     private readonly updatePriceUseCase: IUpdatePriceUseCase,
     private readonly getPricesUseCase: IGetPricesUseCase,
     private readonly createUseCase: ICreateUseCase,
+    private readonly deleteUseCase: IDeleteUseCase,
   ) {}
 
   @UseGuards(EmployeGuard)
@@ -179,5 +186,15 @@ export class ReservesController {
     if(specificReserve) return specificReserve;
     
     throw new HttpException('Not found reserve', HttpStatus.NOT_FOUND)
+  }
+
+  @UseGuards(EmployeGuard)
+  @Delete(RESERVE_DELETE_PATH)  
+  async deleteReserve(@Param('id') id: string): Promise<ReserveDeleteResponseDto | null> {
+    const deleteCommand = new DeleteCommand(id)
+    const response = await this.deleteUseCase.execute(deleteCommand)
+    if(response) return response;
+    
+    throw new HttpException('Error, something went wrong', HttpStatus.INTERNAL_SERVER_ERROR)
   }
 }
