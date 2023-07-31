@@ -99,7 +99,6 @@ export class SupaBaseRepositoryReserve implements IRepositoryReserve {
 
     private async createReserveVehicles (vehicleEntiy: VehicleEntity[], reserveId: string): Promise<VehicleEntity[]> {
         if(!vehicleEntiy.length) return vehicleEntiy;
-        console.log(vehicleEntiy)
         const repository = this.supabaseRepository.getConnection()
         const mappedVehicles = vehicleEntiy.map(vehicle => 
             { 
@@ -117,8 +116,6 @@ export class SupaBaseRepositoryReserve implements IRepositoryReserve {
                 .insert(mappedVehicles)
                 .select()
             
-            console.log(error)
-            console.log(vehiclesQuery)
             if(error) console.log(error)
             
             vehicleEntiy.forEach((vehicle,index) => vehicle.setId(vehiclesQuery[index].id))
@@ -161,7 +158,7 @@ export class SupaBaseRepositoryReserve implements IRepositoryReserve {
                 .delete()
                 .eq('reserve_id', reserveId)
             
-            if(!error) {
+            if(error) {
                 console.log(error)
                 return false
             }
@@ -180,7 +177,7 @@ export class SupaBaseRepositoryReserve implements IRepositoryReserve {
                 .delete()
                 .eq('reserve_id', reserveId)
             
-            if(!error) {
+            if(error) {
                 console.log(error)
                 return false
             }
@@ -233,7 +230,8 @@ export class SupaBaseRepositoryReserve implements IRepositoryReserve {
         try {
             const isDeletedResidents = await this.deleteReserveResidents(id);
             const isDeletedVehicles = await this.deleteReserveVehicles(id);
-
+            console.log(isDeletedResidents)
+            console.log(isDeletedVehicles)
             if(!isDeletedResidents || !isDeletedVehicles) {
                 console.log('ERROR EN LA ELIMINACION DE RESIDENTES Y VEHICULOS')
                 return null
@@ -244,7 +242,7 @@ export class SupaBaseRepositoryReserve implements IRepositoryReserve {
                 .delete()
                 .eq('id', id)
             
-            if(!error) {
+            if(error) {
                 console.log(error)
                 return false
             }
@@ -316,8 +314,7 @@ export class SupaBaseRepositoryReserve implements IRepositoryReserve {
             const reservesId = reserves.map(reserve => reserve.id);
             const reserveResidents = await this.getReserveResidents(reservesId);
             const reserveVehicles = await this.getReserveVehicles(reservesId);
-            console.log(reserveResidents)
-            console.log(reserveVehicles)
+
             if(!reserveResidents || !reserveVehicles) {
                 console.log('ERROR EN OBTENCION DE RESIDENTES Y VEHICULOS')
                 return null
