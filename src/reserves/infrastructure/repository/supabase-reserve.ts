@@ -281,12 +281,13 @@ export class SupaBaseRepositoryReserve implements IRepositoryReserve {
 
     async getActivesReserves(): Promise<ReserveEntity[]> {
         const repository = this.supabaseRepository.getConnection();
-        const todayDate = new Date().toISOString();
+        const todayDate = new Date();
+        todayDate.setHours(todayDate.getHours() - 3)
         try {
             const { data: reservesQuery, error } = await repository
                 .from(RESERVES_NAME)
                 .select('*')
-                .gt('finish_date', todayDate)
+                .gt('finish_date', todayDate.toISOString())
             
             if(error) {
                 console.log(error)
