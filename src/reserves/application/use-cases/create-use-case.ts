@@ -23,7 +23,8 @@ export class CreateUseCase implements ICreateUseCase {
             price,
             residents,
             vehicles,
-            workshiftId 
+            workshiftId,
+            amountHorses 
         } = createCommand;
 
         reserveEntity.setBasicValues(
@@ -35,11 +36,12 @@ export class CreateUseCase implements ICreateUseCase {
             managerLastName,
             managerCarPlate,
             managerMemberNumber,
-            price
+            price,
+            amountHorses
         );
 
         reserveEntity.setAllResidents(residents, vehicles)
-        
+        console.log(reserveEntity)
         return await this.reserveRepository.create(reserveEntity);
     }
 }

@@ -32,6 +32,7 @@ export class ReserveCreateResponseDto {
     managerFirstName: string;
     managerLastName: string;
     managerMemberNumber: string;
+    amountHorses: number;
     workshiftId: string;
 
     constructor() {}
@@ -49,6 +50,7 @@ export class ReserveCreateResponseDto {
         reserveResponse.managerLastName = reserveEntity.managerLastName;
         reserveResponse.managerMemberNumber = reserveEntity.managerMemberNumber; 
         reserveResponse.workshiftId = reserveEntity.workshiftId;
+        reserveResponse.amountHorses = reserveEntity.amountHorses;
 
         return reserveResponse;
     }

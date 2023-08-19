@@ -97,6 +97,7 @@ export class ReservesController {
         body.managerCarPlate, 
         body.managerMemberNumber,
         body.workshiftId,
+        body.amountHorses
       )
     const responseReserve = await this.createUseCase.execute(createCommand)
     if(responseReserve) return ReserveCreateResponseDto.mapReserveEntity(responseReserve); 

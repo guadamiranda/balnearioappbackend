@@ -42,4 +42,6 @@ export class ReserveCreateBodyDto {
     managerLastName: string;
     @IsString()
     managerMemberNumber: string;
+    @IsNotEmpty()
+    amountHorses: number;
 }

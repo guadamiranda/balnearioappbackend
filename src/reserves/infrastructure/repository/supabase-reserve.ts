@@ -51,7 +51,8 @@ export class SupaBaseRepositoryReserve implements IRepositoryReserve {
                 reserveQuery[0].manager_last_name,
                 reserveQuery[0].manager_car_plate,
                 reserveQuery[0].manager_member_number,
-                reserveQuery[0].price
+                reserveQuery[0].price,
+                reserveQuery[0].amount_horses
             )
 
             reserveEntity.setId(reserveQuery[0].id)
@@ -202,6 +203,7 @@ export class SupaBaseRepositoryReserve implements IRepositoryReserve {
                         manager_last_name: reserveEntity.managerLastName,
                         manager_car_plate: reserveEntity.managerCarPlate,
                         manager_member_number: reserveEntity.managerMemberNumber,
+                        amount_horses: reserveEntity.amountHorses,
                         price: reserveEntity.price, 
                         workshift_id: reserveEntity.workshiftId
                     })
@@ -306,6 +308,7 @@ export class SupaBaseRepositoryReserve implements IRepositoryReserve {
                     reserve.manager_car_plate,
                     reserve.manager_member_number,
                     reserve.price,
+                    reserve.amountHorses
                 )
                 reserveEntity.setId(reserve.id)
 

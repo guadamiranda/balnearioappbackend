@@ -12,6 +12,7 @@ export class CreateCommand {
     managerCarPlate: string;
     managerMemberNumber: string;
     workshiftId: string;
+    amountHorses: number;
   
     constructor(
         initDate: string,
@@ -25,6 +26,7 @@ export class CreateCommand {
         managerCarPlate: string,
         managerMemberNumber: string,
         workshiftId: string,
+        amountHorses: number,
     ) {
         this.initDate = initDate;
         this.finishDate = finishDate;
@@ -37,6 +39,7 @@ export class CreateCommand {
         this.managerCarPlate = managerCarPlate;
         this.managerMemberNumber = managerMemberNumber;
         this.workshiftId = workshiftId;
+        this.amountHorses = amountHorses;
     }
   }
   

@@ -12,6 +12,7 @@ export class ReserveEntity {
     vehicles: VehicleEntity[];
     price: number;
     managerDni: string;
+    amountHorses: number;
     managerFirstName: string;
     managerLastName: string;
     managerCarPlate: string;
@@ -29,6 +30,7 @@ export class ReserveEntity {
         managerCarPlate: string,
         managerMemberNumber: string,
         price: number,
+        amountHorses: number,
     ) {
         this.workshiftId = workshiftId;
         this.initDate = initDate;
@@ -39,6 +41,7 @@ export class ReserveEntity {
         this.managerLastName = managerLastName;
         this.managerMemberNumber = managerMemberNumber;
         this.managerCarPlate = managerCarPlate;
+        this.amountHorses = amountHorses;
     }
 
     setAllResidents(residents: ResidentsReserve[], vehicles: VehiclesReserve[]) {
