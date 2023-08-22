@@ -178,10 +178,16 @@ export class ReservesController {
   @UseGuards(EmployeGuard)
   @Get(RESERVE_BASE_PATH)
   async getSpecificReserve(@Query() queryParams: SpecificReserveQueryDto): Promise<ReserveEntity> {
-    if(!queryParams.dni && !queryParams.carplate) {
-      throw new HttpException('Should send at least one query param (dni or carplate)', HttpStatus.BAD_REQUEST)
+
+    if(!queryParams.dni && !queryParams.carplate && !queryParams.membernumber) {
+      throw new HttpException('Should send at least one query param (dni or carplate or membernumber)', HttpStatus.BAD_REQUEST)
     }
-    const specificReserveCommand = new GetSpecificCommand(queryParams.dni, queryParams.carplate)
+
+    if(queryParams.dni == '0') queryParams.dni = ''
+    if(queryParams.membernumber == '') queryParams.membernumber = '0'
+    if(queryParams.carplate == '') queryParams.carplate = '0'
+
+    const specificReserveCommand = new GetSpecificCommand(queryParams.dni, queryParams.carplate, queryParams.membernumber)
     const specificReserve = await this.getSpecificReserveUseCase.execute(specificReserveCommand)
 
     if(specificReserve) return specificReserve;

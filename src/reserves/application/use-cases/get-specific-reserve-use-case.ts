@@ -11,6 +11,6 @@ export class GetSpecificReserveUseCase implements IGetSpecificReserveUseCase {
     ) {}
     
     async execute(getSpecificCommand: GetSpecificCommand): Promise<ReserveEntity> {
-        return await this.reserveRepository.getSpecificReserve(getSpecificCommand.dni, getSpecificCommand.carPlate);
+        return await this.reserveRepository.getSpecificReserve(getSpecificCommand.dni, getSpecificCommand.carPlate, getSpecificCommand.memberNumber);
     }
 }

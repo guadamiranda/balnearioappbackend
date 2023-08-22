@@ -8,4 +8,7 @@ export class SpecificReserveQueryDto {
   @IsOptional()
   @IsString()
   carplate?: string;
+
+  @IsString()
+  membernumber?: string;
 }

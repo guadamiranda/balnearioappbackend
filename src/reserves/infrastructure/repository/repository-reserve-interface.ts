@@ -3,7 +3,7 @@ import { DiscountEntity } from "../../domain/discount-entity";
 import { PriceEntity } from '../../domain/price-entity';
 
 export abstract class IRepositoryReserve {
-    abstract getSpecificReserve(dni: string, carPlate: string): Promise<ReserveEntity>;
+    abstract getSpecificReserve(dni: string, carPlate: string, memberNumber: string): Promise<ReserveEntity>;
     abstract createDiscount(discountEntity: DiscountEntity): Promise<DiscountEntity>;
     abstract updateDiscount(DiscountEntity: DiscountEntity): Promise<DiscountEntity>;
     abstract create(reserveEntity: ReserveEntity): Promise<ReserveEntity>;

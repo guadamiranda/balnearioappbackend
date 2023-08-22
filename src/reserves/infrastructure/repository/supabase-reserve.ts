@@ -21,41 +21,43 @@ export class SupaBaseRepositoryReserve implements IRepositoryReserve {
     constructor (
         private readonly supabaseRepository: IRepositoryConnection
     ) {}
-    async getSpecificReserve(dni: string, carPlate: string): Promise<ReserveEntity> {
+    async getSpecificReserve(dni: string, carPlate: string, memberNumber: string): Promise<ReserveEntity> {
         const repository = this.supabaseRepository.getConnection()
         try {
             const { data: reserveQuery, error } = await repository
                 .from(RESERVES_NAME)
                 .select('*')
-                .or(`manager_car_plate.eq.${carPlate},manager_dni.eq.${dni}`)
                 .order('init_date', { ascending: false })
-                .limit(1);
             
             if(error) {
                 console.log(error)
                 return null
             }
 
-            if(!reserveQuery.length) {
+            const selectedReserve = reserveQuery.find(row => {
+                return row.manager_dni == dni || row.manager_car_plate == carPlate || row.manager_member_number == memberNumber
+            })
+
+            if(!selectedReserve) {
                 console.log('Not Found Error')
                 return null
             }
             
             const reserveEntity = new ReserveEntity()
             reserveEntity.setBasicValues(
-                reserveQuery[0].workshift_id,
-                reserveQuery[0].init_date,
-                reserveQuery[0].finish_date,
-                reserveQuery[0].manager_dni,
-                reserveQuery[0].manager_first_name,
-                reserveQuery[0].manager_last_name,
-                reserveQuery[0].manager_car_plate,
-                reserveQuery[0].manager_member_number,
-                reserveQuery[0].price,
-                reserveQuery[0].amount_horses
+                selectedReserve.workshift_id,
+                selectedReserve.init_date,
+                selectedReserve.finish_date,
+                selectedReserve.manager_dni,
+                selectedReserve.manager_first_name,
+                selectedReserve.manager_last_name,
+                selectedReserve.manager_car_plate,
+                selectedReserve.manager_member_number,
+                selectedReserve.price,
+                selectedReserve.amount_horses
             )
+            reserveEntity.setId(selectedReserve.id)
 
-            reserveEntity.setId(reserveQuery[0].id)
             const reserveResidents = await this.getReserveResidents([reserveEntity.id])
             const reserveVehicles = await this.getReserveVehicles([reserveEntity.id])
 
