@@ -3,13 +3,15 @@ import { SupabaseConnection } from './shared/infrastructure/connection/supabase-
 import { ReservesModule } from './reserves/reserves.module';
 import { UsersModule } from './users/users.module';
 import { Module } from '@nestjs/common';
+import { StaysModule } from './stays/stays.module';
+import { SharedModule } from './shared/shared.module';
 
 @Module({
-  imports: [UsersModule, ReservesModule],
+  imports: [StaysModule, SharedModule],
   controllers: [],
   providers: [{provide: IRepositoryConnection, useClass: SupabaseConnection}],
   exports: [
-    IRepositoryConnection
+    SharedModule
   ]
 })
 export class AppModule {}
