@@ -1,10 +1,10 @@
 export class PersonEntity {
-    nroDoc: string
-    firstName: string
-    lastName: string
-    phone: string
-    location: string
-    memberNum: string
+    nroDoc: number
+    firstName?: string
+    lastName?: string
+    phone?: string
+    location?: string
+    memberNum?: number
 
     constructor(nroDoc, firstName, lastName, phone, location, memberNum) {
         this.nroDoc = nroDoc,
@@ -13,5 +13,9 @@ export class PersonEntity {
         this.phone = phone,
         this.location = location,
         this.memberNum = memberNum
+    }
+
+    setNroDoc(nroDoc) {
+        this.nroDoc = nroDoc
     }
 }

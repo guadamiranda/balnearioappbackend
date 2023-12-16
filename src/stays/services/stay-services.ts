@@ -1,21 +1,42 @@
-import { Injectable } from "@nestjs/common";
-import { CreateStayRequest } from "../controllers/dto/create-stay-request";
-import { SupaBaseRepositoryStay } from "../repository/stay-repository";
-import { CreateGroupRequest } from "../controllers/dto/create-group-request";
 import { CreateVisitorRequest } from "../controllers/dto/create-visitor-request";
+import { CreateGroupRequest } from "../controllers/dto/create-group-request";
+import { CreateStayRequest } from "../controllers/dto/create-stay-request";
+import { StayRepository } from "../repository/stay-repository";
+import { VisitorEntity } from "../domain/visitor-entity";
+import { VisitorServices } from "./visitor-services";
+import { StayEntity } from "../domain/stay-entity";
+import { GroupServices } from "./group-services";
+import { Injectable } from "@nestjs/common";
 
 @Injectable()
 export class StayServices {
     constructor(
-        private readonly stayRepository: SupaBaseRepositoryStay
+        private readonly stayRepository: StayRepository,
+        private readonly groupServices: GroupServices,
+        private readonly visitorServices: VisitorServices
     ) {}
     
-    async createStay(stayDto: CreateStayRequest): Promise<any> {
+    async initializeStay(stayDto: CreateStayRequest) {
+        console.log('Initialize stay')
+        const stayEntity = CreateStayRequest.getStayEntity(stayDto)
         const groupEntity = CreateGroupRequest.getGroupEntity(stayDto.group)
-        const visitorsEntity = stayDto.visitors.map(visitor => CreateVisitorRequest.getVisitorEntity(visitor))
+        const visitorEntitys: VisitorEntity[] = stayDto.visitors.map(visitor => CreateVisitorRequest.getVisitorEntity(visitor))
 
-        const stayEntity = this.stayRepository.createStay(CreateStayRequest.getStayEntity(stayDto));
+        await this.createStay(stayEntity)
+        await this.groupServices.createGroup(groupEntity)
+        await this.visitorServices.createManyVisitors(visitorEntitys)
+
+        stayEntity.completeStay(groupEntity, visitorEntitys)
         return stayEntity
-        //return await this.userRepository.createRole(new RoleEntity('',createRoleCommand.name))
     }
+
+    async createStay(stayEntity: StayEntity): Promise<StayEntity> {
+        console.log('Stay to be created: ', stayEntity)
+        const createdStay = await this.stayRepository.createStay(stayEntity);
+
+        if(!createdStay) 
+            throw Error('Error creating stay')
+        return stayEntity
+    }
+
 }

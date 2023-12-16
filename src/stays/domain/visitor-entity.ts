@@ -1,3 +1,5 @@
+import { PersonEntity } from "./person-entity"
+
 export class VisitorEntity {
     id: string
     idGroup: string
@@ -5,6 +7,7 @@ export class VisitorEntity {
     idDiscount: string
     isManager: boolean
     nroDoc: string
+    person?: PersonEntity
 
     constructor(wristbandNumber, isManager, nrodoc) {
         this.wristbandNumber = wristbandNumber,
@@ -18,5 +21,9 @@ export class VisitorEntity {
 
     setIdGroup(idGroup) {
         this.idGroup = idGroup
+    }
+
+    setId(id: string) {
+        this.id = id
     }
 }

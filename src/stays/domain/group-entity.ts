@@ -10,4 +10,8 @@ export class GroupEntity {
         this.idCampsite = idCampsite,
         this.carPlate = carPlate
     }
+
+    setId(id: string) {
+        this.id = id
+    }
 }

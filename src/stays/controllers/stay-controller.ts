@@ -8,10 +8,13 @@ import {
   Put,
   Delete,
   Body,
-  UseGuards
+  UseGuards,
+  HttpException,
+  HttpStatus
 } from '@nestjs/common';
 import { CreateStayRequest } from './dto/create-stay-request';
 import { StayServices } from '../services/stay-services';
+import { StayEntity } from '../domain/stay-entity';
 
 @Controller('stay')
 export class StayController {
@@ -20,8 +23,12 @@ export class StayController {
   ) {}
 
   @Post('/')
-  async createStay(@Body() body:CreateStayRequest): Promise<any> {
-    return await this.stayServices.createStay(body)
+  async createStay(@Body() body:CreateStayRequest): Promise<StayEntity> {
+    try {
+      return await this.stayServices.initializeStay(body)
+    } catch (error) {
+      throw new HttpException(error.message, HttpStatus.INTERNAL_SERVER_ERROR)
+    }
   }
 
   /*@Put(UPDATE_ROLE_PATH)

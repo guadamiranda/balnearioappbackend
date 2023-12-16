@@ -1,14 +1,14 @@
 import { StayEntity } from "src/stays/domain/stay-entity"
 
-export class TableStay {
+export class StayRow {
     id: string
     init_date: string
     finish_date: string
     amount: number
     stay_type: string
 
-    static convertEntityToTable(stayEntity: StayEntity): TableStay {
-        const tableStay = new TableStay()
+    static convertEntityToTable(stayEntity: StayEntity): StayRow {
+        const tableStay = new StayRow()
         tableStay.id = stayEntity.id
         tableStay.init_date = stayEntity.initDate
         tableStay.finish_date = stayEntity.finishDate
@@ -18,7 +18,7 @@ export class TableStay {
         return tableStay
     }
 
-    convertTableToEntity(): StayEntity {
+    /*static convertTableToEntity(): StayEntity {
         const stayEntity = new StayEntity(
             this.init_date, 
             this.finish_date, 
@@ -29,5 +29,5 @@ export class TableStay {
         stayEntity.setId(this.id)
 
         return stayEntity
-    }
+    }*/
 }

@@ -1,10 +1,10 @@
 import { IRepositoryConnection } from "../../shared/infrastructure/connection/repository-connection";
-import { Injectable } from "@nestjs/common";
 import { StayEntity } from "../domain/stay-entity";
-import { TableStay } from "./dto/stay";
+import { Injectable } from "@nestjs/common";
+import { StayRow } from "./dto/stay-row";
 
 @Injectable()
-export class SupaBaseRepositoryStay {
+export class StayRepository {
     private repository = this.supabaseRepository.getConnection()
     private STAY_TABLE_NAME = 'Stay'
     constructor(
@@ -12,7 +12,7 @@ export class SupaBaseRepositoryStay {
     ) {}
 
     async createStay(stayEntity: StayEntity): Promise<StayEntity> {
-        const tableStay = TableStay.convertEntityToTable(stayEntity)
+        const tableStay = StayRow.convertEntityToTable(stayEntity)
         try {
             const {data: stayQuery, error} = await this.repository
             .from(this.STAY_TABLE_NAME)
@@ -24,7 +24,7 @@ export class SupaBaseRepositoryStay {
                 return null
             }
 
-            stayEntity.setId(stayQuery.id)
+            stayEntity.setId(stayQuery[0].id)
             return stayEntity
         } catch (error) {
             console.log("Error en la creacion de la estadia. El error es: \n",error)
