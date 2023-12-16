@@ -3,8 +3,8 @@ import { PersonEntity } from "../domain/person-entity";
 import { Injectable } from "@nestjs/common";
 
 type RecolectDataResult = {
-    personsUpdated: { [key: string]: any },
-    personsThatAreNoRegistered: { [key: string]: any }
+    personsUpdated: PersonEntity[],
+    personsThatAreNoRegistered: PersonEntity[]
 }
 
 @Injectable()
@@ -16,7 +16,7 @@ export class PersonServices{
     async recolectDataFromPersons(personEntitys: PersonEntity[]): Promise<RecolectDataResult> {
         console.log('Persons to be recolected: ', personEntitys)
         const nroDocs = personEntitys.map(entity => entity.nroDoc)
-        const personsRegistered = await this.personRepository.findPersons(nroDocs)
+        const personsRegistered = await this.findPersons(nroDocs)
         const indexedPersonsRegistered = this.getIndexedEntitys(personsRegistered)
 
         const personsRegisteredWithNullData = personsRegistered.filter(entity => this.hasNullData(entity))
@@ -26,8 +26,8 @@ export class PersonServices{
         await this.updatePersons(personsRegisteredWithNullData)
 
         return {
-            personsUpdated: this.getIndexedEntitys(personsRegisteredWithNullData),
-            personsThatAreNoRegistered: this.getIndexedEntitys(personsThatAreNoRegistered)
+            personsUpdated: personsRegisteredWithNullData,
+            personsThatAreNoRegistered: personsThatAreNoRegistered
         }
     }
 

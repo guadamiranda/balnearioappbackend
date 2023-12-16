@@ -9,6 +9,7 @@ export class GroupServices {
     ) {}
     
     async createGroup(groupEntity: GroupEntity): Promise<GroupEntity> {
+        console.log('Group to be created: ', groupEntity)
         const createdGroup = await this.groupRepository.createGroup(groupEntity)
         if(!createdGroup) {
             throw Error('Group cannot be created')

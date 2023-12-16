@@ -1,3 +1,8 @@
+import { CreateVisitorRequest } from './dto/create-visitor-request';
+import { CreateGroupRequest } from './dto/create-group-request';
+import { CreateStayRequest } from './dto/create-stay-request';
+import { StayServices } from '../services/stay-services';
+import { StayEntity } from '../domain/stay-entity';
 import { 
   Controller,
   Headers,
@@ -12,9 +17,6 @@ import {
   HttpException,
   HttpStatus
 } from '@nestjs/common';
-import { CreateStayRequest } from './dto/create-stay-request';
-import { StayServices } from '../services/stay-services';
-import { StayEntity } from '../domain/stay-entity';
 
 @Controller('stay')
 export class StayController {
@@ -23,9 +25,12 @@ export class StayController {
   ) {}
 
   @Post('/')
-  async createStay(@Body() body:CreateStayRequest): Promise<StayEntity> {
+  async createStay(@Body() stayDto:CreateStayRequest): Promise<StayEntity> {
     try {
-      return await this.stayServices.initializeStay(body)
+      const stayEntity = CreateStayRequest.getStayEntity(stayDto)
+      const groupEntity = CreateGroupRequest.getGroupEntity(stayDto.group)
+      const visitorEntitys = stayDto.visitors.map(visitor => CreateVisitorRequest.getVisitorEntity(visitor))
+      return await this.stayServices.initializeStay(stayEntity, groupEntity, visitorEntitys)
     } catch (error) {
       throw new HttpException(error.message, HttpStatus.INTERNAL_SERVER_ERROR)
     }

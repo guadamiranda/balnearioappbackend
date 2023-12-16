@@ -9,7 +9,6 @@ export class CreateStayRequest {
     stayType: string
     group: CreateGroupRequest
     visitors: CreateVisitorRequest[]
-    quantityAnimals: number
 
     static getStayEntity(createStayRequest: CreateStayRequest): StayEntity {
         return new StayEntity(
