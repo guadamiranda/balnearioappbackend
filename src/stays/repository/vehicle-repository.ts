@@ -23,6 +23,7 @@ export class VehicleRepository {
             console.log("Error en la busqueda del vehiculo.\n", error)
             return null
         }
+
         return new VehicleEntity(vehicleQuery[0]?.car_plate) 
     }
 

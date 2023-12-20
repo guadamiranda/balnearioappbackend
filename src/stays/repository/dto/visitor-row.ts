@@ -10,11 +10,11 @@ export class VisitorRow {
 
     static convertEntityToTable(visitorEntity: VisitorEntity): VisitorRow {
         const table = new VisitorRow()
-        table.id = visitorEntity.id
-        table.id_group = visitorEntity.nroDoc
+        table.id_group = visitorEntity.idGroup
         table.wristband_number = visitorEntity.wristbandNumber
         table.is_manager = visitorEntity.isManager
         table.nro_doc = visitorEntity.nroDoc
+        table.id_discount = visitorEntity.idDiscount
         return table
     }
 }

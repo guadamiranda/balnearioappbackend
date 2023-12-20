@@ -22,7 +22,7 @@ export class VisitorRepository {
             .select()
 
             if(error) {
-                console.log("Error en la creacion del visitante. El error es el if 200: \n", error)
+                console.log("Error en la creacion del visitante. \n", error)
                 return null
             }
 

@@ -25,9 +25,13 @@ export class StayServices {
         const vehicleEntity = new VehicleEntity(groupEntity.carPlate);
         const animalEntity = new AnimalEntity(groupEntity.animals.quantity, groupEntity.animals.typeAnimal);
         await this.createStay(stayEntity)
-        await this.groupServices.createGroup(groupEntity)
-        await this.visitorServices.createManyVisitors(visitorEntitys)
+
+        groupEntity.setIdStay(stayEntity.id)
         await this.vehicleServices.createVehicle(vehicleEntity)
+        await this.groupServices.createGroup(groupEntity)
+
+        visitorEntitys.forEach(visitor => visitor.setIdGroup(groupEntity.id))
+        await this.visitorServices.createManyVisitors(visitorEntitys)
         await this.animalServices.registerAnimals(animalEntity, groupEntity.id)
 
         stayEntity.completeStay(groupEntity, visitorEntitys)

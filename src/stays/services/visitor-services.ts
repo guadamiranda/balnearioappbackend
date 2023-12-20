@@ -13,7 +13,7 @@ export class VisitorServices{
     async createManyVisitors(visitorEntity: VisitorEntity[]): Promise<VisitorEntity[]> {
         console.log('Visitors to be created: ', visitorEntity)
         const personsEntitys = visitorEntity.map(visitor => visitor.person)
-        this.personServices.recolectDataFromPersons(personsEntitys)
+        await this.personServices.recolectDataFromPersons(personsEntitys)
         
         const createdVisitors = await this.visitorRepository.createManyVisitors(visitorEntity)
         if(!createdVisitors) {

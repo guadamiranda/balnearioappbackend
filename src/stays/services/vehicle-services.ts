@@ -22,14 +22,17 @@ export class VehicleServices{
         const vehicleEntity = await this.vehicleRepository.findVehicle(carPlate)
 
         if(!vehicleEntity) throw Error('Error finding Vehicle')
+        
         return vehicleEntity
     }
     
     async createVehicle(vehicleEntity: VehicleEntity): Promise<VehicleEntity> {
         console.log('Vehicle to be created: ', vehicleEntity)
-        const createdPersons = await this.vehicleRepository.createVehicle(vehicleEntity)
+        const foundVehicle = await this.findVehicle(vehicleEntity.carPlate)
+        if(foundVehicle && foundVehicle.carPlate != undefined) return foundVehicle
 
-        if(!createdPersons) throw Error('Error creating vehicle')
-        return createdPersons
+        const createdVehicle = await this.vehicleRepository.createVehicle(vehicleEntity)
+        if(!createdVehicle) throw Error('Error creating vehicle')
+        return createdVehicle
     }
 }

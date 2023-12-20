@@ -21,4 +21,8 @@ export class GroupEntity {
     setAnimals(AnimalEntity: AnimalEntity) {
         this.animals = AnimalEntity
     }
+
+    setIdStay(idStay: string) {
+        this.idStay = idStay
+    }
 }

@@ -19,11 +19,14 @@ export class PersonServices{
         const personsRegistered = await this.findPersons(nroDocs)
         const indexedPersonsRegistered = this.getIndexedEntitys(personsRegistered)
 
-        const personsRegisteredWithNullData = personsRegistered.filter(entity => this.hasNullData(entity))
+        const personsRegisteredWithNullData = personEntitys.filter(entity => {return this.hasNullData(indexedPersonsRegistered[entity.nroDoc])})
         const personsThatAreNoRegistered = personEntitys.filter(entity => !indexedPersonsRegistered[entity.nroDoc])
-    
-        await this.createPersons(personsThatAreNoRegistered)
-        await this.updatePersons(personsRegisteredWithNullData)
+        
+        if(personsThatAreNoRegistered.length > 0)
+            await this.createPersons(personsThatAreNoRegistered)
+        
+        if(personsRegisteredWithNullData.length > 0)
+            await this.updatePersons(personsRegisteredWithNullData)
 
         return {
             personsUpdated: personsRegisteredWithNullData,
@@ -59,13 +62,16 @@ export class PersonServices{
     }
 
     private getIndexedEntitys(personEntitys: PersonEntity[]) {
+        if(personEntitys.length == 0) return {}
+
         return personEntitys.reduce((acc, entity) => {
             acc[entity.nroDoc] = entity
             return acc
-        })
+        }, {})
     }
 
     private hasNullData(personEntitys: PersonEntity): boolean {
-       return Object.values(personEntitys).some(propValues => propValues == null)
+        if(!personEntitys) return false
+        return Object.values(personEntitys).some(propValues => !propValues)
     }
 }

@@ -15,7 +15,7 @@ export class PersonRepository {
             const { data:personQuery, error } = await this.repository
             .from(this.PERSON_TABLE_NAME)
             .select('*')
-            .in('nroDoc', nrosDoc)
+            .in('nro_doc', nrosDoc)
     
             if(error) {
                 console.log(error)
@@ -48,7 +48,7 @@ export class PersonRepository {
         const {data:personQuery, error} = await this.repository
         .from(this.PERSON_TABLE_NAME)
         .update(personRows)
-        .in('nroDoc', nroDocs)
+        .in('nro_doc', nroDocs)
         .select()
 
         if(error) {

@@ -19,6 +19,7 @@ export class CreateVisitorRequest {
             CreateVisitorRequest.isManager,
             CreateVisitorRequest.dni
         )
+        visitorEntiy.setIdDiscount(CreateVisitorRequest.idDiscount)
         visitorEntiy.person = this.getPersonEntity(CreateVisitorRequest)
         return visitorEntiy
     }
