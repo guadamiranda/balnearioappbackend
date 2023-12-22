@@ -34,6 +34,19 @@ export class VisitorRepository {
             return null;
         }
     }
+
+    async deleteVisitorsbyidsGroup(idsGroup: string[]): Promise<Boolean> {
+        const {data: visitorQuery, error} = await this.repository
+        .from(this.VISITOR_TABLE_NAME)
+        .delete()
+        .in('id_group', idsGroup)
+
+        if(error) {
+            console.log("Error en la eliminacion de visitantes. \n", error)
+            return false
+        }
+        return true
+    }
     
     private setIdsOnEntitys(visitorEntitys: VisitorEntity[], visitorRows: VisitorRow[]) {
         const indexVisitors = visitorRows.reduce((acc, visitor) => {

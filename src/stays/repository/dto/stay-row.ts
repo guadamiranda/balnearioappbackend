@@ -18,16 +18,15 @@ export class StayRow {
         return tableStay
     }
 
-    /*static convertTableToEntity(): StayEntity {
+    static convertTableToEntity(tableRow: StayRow): StayEntity {
         const stayEntity = new StayEntity(
-            this.init_date, 
-            this.finish_date, 
-            this.amount, 
-            this.stay_type
+            tableRow.init_date, 
+            tableRow.finish_date, 
+            tableRow.amount, 
+            tableRow.stay_type
         )
 
-        stayEntity.setId(this.id)
-
+        stayEntity.setId(tableRow.id)
         return stayEntity
-    }*/
+    }
 }

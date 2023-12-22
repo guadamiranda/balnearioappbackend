@@ -47,4 +47,42 @@ export class StayServices {
         return stayEntity
     }
 
+    async getActiveStays(): Promise<StayEntity[]> {
+        const staysActives = this.stayRepository.getActiveStays()
+
+        if(!staysActives) 
+            throw Error('Error fetching actives stays')
+        return staysActives
+    }
+
+    async deleteStays(ids: string[]): Promise<any> {
+        const foundStays = await this.findStay(ids)
+        if(foundStays.length == 0)
+            throw Error(`Error deleting stay: No exists stays to delete with ids ${ids}`)
+
+        const foundGroups = await this.groupServices.findGroupsByIdsStay(foundStays.map(stay => stay.id))
+        
+        if(foundGroups.length == 0)
+            throw Error(`Something went wrong deleting stay: No exists groups to delete with ids ${ids}`)
+
+        const idsGroups = foundGroups.map(group => group.id)
+        await this.animalServices.deleteAnimalsByIdsGroup(idsGroups)
+        await this.visitorServices.deleteVisitorsByIdsGroup(idsGroups)
+        await this.groupServices.deleteGroupsByIds(idsGroups)
+        const isDeleted = await this.stayRepository.deleteByIds(foundStays.map(stay => stay.id))
+        
+        if(!isDeleted)
+            throw Error('Error deleting stay')
+            
+        return `Stays with ids ${ids} deleted`
+    }
+
+    async findStay(ids: string[]): Promise<StayEntity[]> {
+        const foundStays = await this.stayRepository.findStays(ids)
+        if(!foundStays)
+            throw Error('Error finding stay')
+
+        return foundStays
+    }
+
 }

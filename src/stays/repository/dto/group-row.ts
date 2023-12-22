@@ -16,4 +16,15 @@ export class GroupRow {
         table.car_plate = entity.carPlate
         return table
     }
+
+    static convertTableToEntity(tableRow: GroupRow): GroupEntity {
+        const groupEntity = new GroupEntity(
+            tableRow.id_employee, 
+            tableRow.id_campsite,
+            tableRow.car_plate
+        )
+        groupEntity.setIdStay(tableRow.id_stay)
+        groupEntity.setId(tableRow.id)
+        return groupEntity
+    }
 }

@@ -21,4 +21,11 @@ export class VisitorServices{
         }
         return createdVisitors
     }
+    
+    async deleteVisitorsByIdsGroup(ids: string[]): Promise<boolean> {
+        console.log('Visitors to be deleted: ', ids)
+        if(!await this.visitorRepository.deleteVisitorsbyidsGroup(ids)) 
+            throw Error('Error deleting visitors')
+        return true
+    }
 }

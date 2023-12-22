@@ -31,6 +31,61 @@ export class StayRepository {
             return null;
         }
     }
+
+    async getActiveStays(): Promise<StayEntity[]> {
+        const today = new Date().getTime()
+        const {data: staysQuery, error} = await this.repository
+            .from(this.STAY_TABLE_NAME)
+            .select()
+            .gt('finish_date', today)
+
+        if(error) {
+            console.log("Error consultando las estadias activas" ,error)
+            return null
+        }
+
+        if(staysQuery.length === 0) return []
+        
+        return staysQuery.map(stay => StayRow.convertTableToEntity(stay as StayRow))
+    }
+
+    async findStays(ids: string[]): Promise<StayEntity[]> {
+        const {data: stayQuery, error} = await this.repository
+            .from(this.STAY_TABLE_NAME)
+            .select()
+            .in('id', ids)
+        
+        if(error) {
+            console.log("Error buscando estadias. \n", error)
+            return null
+        }
+
+        return stayQuery.map(stay => StayRow.convertTableToEntity(stay as StayRow))
+    }
+
+    async deleteStay(ids: string[]): Promise<boolean> {
+        const { error } = await this.repository
+            .from(this.STAY_TABLE_NAME)
+            .delete()
+            .in('id', ids)
+        if(error) {
+            console.log("Error al borrar la estadia. \n", error)
+            return false
+        }
+        return true
+    }
+
+    async deleteByIds(ids: string[]): Promise<boolean> {
+        const { error } = await this.repository
+            .from(this.STAY_TABLE_NAME)
+            .delete()
+            .in('id', ids)
+        if(error) {
+            console.log("Error al borrar la estadia. \n", error)
+            return false
+        }
+        return true
+    }
     /*async createEmploye(userEntity: UserEntity, password: string): Promise<UserEntity> {
         const repository = this.supabaseRepository.getConnection()
         try {

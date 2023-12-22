@@ -36,6 +36,16 @@ export class StayController {
     }
   }
 
+  @Get('/active')
+  async getActivesStays(): Promise<StayEntity[]> {
+    return await this.stayServices.getActiveStays()
+  }
+
+  @Delete('/')
+  async deleteStays(@Body() idsStays: string[]): Promise<boolean> {
+    return await this.stayServices.deleteStays(idsStays)
+  }
+
   /*@Put(UPDATE_ROLE_PATH)
   async updateRole(@Headers() headers: any, @Param('id') id: string, @Body() body: UpdateRoleBodyDto): Promise<RoleEntity> {
     const updateRoleCommand = new UpdateRoleCommand(

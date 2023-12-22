@@ -11,7 +11,7 @@ export class GroupRepository {
         private readonly supabaseRepository: IRepositoryConnection
     ) {}
 
-    async createGroup(groupEntity: GroupEntity): Promise<GroupEntity> {
+    async create(groupEntity: GroupEntity): Promise<GroupEntity> {
         const groupTable = GroupRow.convertEntityToTable(groupEntity)
         const {data:groupQuery, error} = await this.repository
         .from(this.GROUP_TABLE_NAME)
@@ -25,5 +25,32 @@ export class GroupRepository {
 
         groupEntity.setId(groupQuery[0].id)
         return groupEntity
+    }
+
+    async findManyByIdsStay(idsStay: string[]): Promise<GroupEntity[]> {
+        const {data:groupQuery, error} = await this.repository
+        .from(this.GROUP_TABLE_NAME)
+        .select()
+        .in('id_stay', idsStay)
+
+        if(error) {
+            console.log("Error buscando grupos \n", error)
+            return null
+        }
+
+        if(groupQuery.length === 0) return []
+        return groupQuery.map(group => GroupRow.convertTableToEntity(group as GroupRow))
+    }
+
+    async deleteByIds(ids: string[]): Promise<Boolean> {
+        const {data: groupQuery, error} = await this.repository
+        .from(this.GROUP_TABLE_NAME)
+        .delete()
+        .in('id', ids)
+        if(error) {
+            console.log("Error en la eliminacion de grupos. El error es: \n", error)
+            return false
+        }
+        return true
     }
 }

@@ -28,4 +28,16 @@ export class AnimalRepository {
         animalEntity.setId(animalQuery[0].id)
         return animalEntity
     }
+
+    async deleteByidsGroup(idsGroup: string[]): Promise<Boolean> {
+        const {data: animalQuery, error} = await this.repository
+        .from(this.ANIMAL_TABLE_NAME)
+        .delete()
+        .in('id_group', idsGroup)
+        if(error) {
+            console.log("Error en la eliminacion de animales.\n", error)
+            return false
+        }
+        return true
+    }
 }

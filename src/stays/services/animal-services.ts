@@ -15,4 +15,10 @@ export class AnimalServices{
         if(!registeredAnimal) throw Error('Error registered animals')
         return registeredAnimal
     }
+
+    async deleteAnimalsByIdsGroup(idsGroup: string[]): Promise<boolean> {
+        if(!await this.animalRepository.deleteByidsGroup(idsGroup)) 
+            throw Error('Error deleting animals')
+        return true
+    }
 }
