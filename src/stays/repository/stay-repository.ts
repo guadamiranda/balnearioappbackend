@@ -20,7 +20,7 @@ export class StayRepository {
             .select()
 
             if(error) {
-                console.log("Error en la creacion de la estadia. El error es el if 200: \n", error)
+                console.log("Error en la creacion de la estadia.", error)
                 return null
             }
 
