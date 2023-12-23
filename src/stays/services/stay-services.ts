@@ -74,7 +74,9 @@ export class StayServices {
         if(!isDeleted)
             throw Error('Error deleting stay')
             
-        return `Stays with ids ${ids} deleted`
+        return {
+            message: `Stays with ids ${ids} deleted`,
+        }
     }
 
     async findStay(ids: string[]): Promise<StayEntity[]> {

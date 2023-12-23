@@ -38,12 +38,20 @@ export class StayController {
 
   @Get('/active')
   async getActivesStays(): Promise<StayEntity[]> {
-    return await this.stayServices.getActiveStays()
+    try {
+      return await this.stayServices.getActiveStays()
+    } catch (error) {
+      throw new HttpException(error.message, HttpStatus.INTERNAL_SERVER_ERROR)
+    }
   }
 
   @Delete('/')
-  async deleteStays(@Body() idsStays: string[]): Promise<boolean> {
-    return await this.stayServices.deleteStays(idsStays)
+  async deleteStays(@Body() body): Promise<boolean> {
+    try {
+      return await this.stayServices.deleteStays(body.idsStay)
+    } catch (error) {
+      throw new HttpException(error.message, HttpStatus.INTERNAL_SERVER_ERROR)
+    }
   }
 
   /*@Put(UPDATE_ROLE_PATH)

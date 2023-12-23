@@ -33,11 +33,12 @@ export class StayRepository {
     }
 
     async getActiveStays(): Promise<StayEntity[]> {
-        const today = new Date().getTime()
+        const today = new Date()
+        today.setHours(0,0,0,0)
         const {data: staysQuery, error} = await this.repository
             .from(this.STAY_TABLE_NAME)
             .select()
-            .gt('finish_date', today)
+            .gt('finish_date', today.toISOString())
 
         if(error) {
             console.log("Error consultando las estadias activas" ,error)
