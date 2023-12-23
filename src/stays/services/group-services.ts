@@ -1,0 +1,34 @@
+import { GroupRepository } from "../repository/group-repository";
+import { GroupEntity } from "../domain/group-entity";
+import { Injectable } from "@nestjs/common";
+
+@Injectable()
+export class GroupServices {
+    constructor(
+        private readonly groupRepository: GroupRepository
+    ) {}
+    
+    async createGroup(groupEntity: GroupEntity): Promise<GroupEntity> {
+        console.log('Group to be created: ', groupEntity)
+        const createdGroup = await this.groupRepository.create(groupEntity)
+        if(!createdGroup) {
+            throw Error('Group cannot be created')
+        }
+        return createdGroup
+    }
+
+    async findGroupsByIdsStay(ids: string[]): Promise<GroupEntity[]> {
+        const foundGroups = await this.groupRepository.findManyByIdsStay(ids)
+        if(!foundGroups) {
+            throw Error(`Groups with Ids ${ids} cannot be found`)
+        }
+        return foundGroups
+    }
+
+    async deleteGroupsByIds(ids: string[]): Promise<boolean> {
+        console.log('Groups to be deleted: ', ids)
+        if(!await this.groupRepository.deleteByIds(ids)) 
+            throw Error('Error deleting groups')
+        return true
+    }
+}
