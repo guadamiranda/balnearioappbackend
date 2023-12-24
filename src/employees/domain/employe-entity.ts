@@ -8,12 +8,12 @@ export class EmployeEntity {
     isDismissal: boolean
 
     constructor(
-        dni:string, 
-        firstName: string, 
-        lastName: string, 
-        email: string, 
-        password: string, 
-        roleId: string, 
+        dni:string,
+        firstName: string,
+        lastName: string,
+        email: string,
+        password: string,
+        roleId: string,
         isDismissal: boolean
         ) {
         this.dni = dni
