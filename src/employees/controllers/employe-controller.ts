@@ -16,8 +16,11 @@ import {
   HttpStatus
 } from '@nestjs/common';
 import { UpdateEmployeeRequest } from './dto/update-employee-request';
+import { AuthGuard } from '@nestjs/passport';
+
 
 @Controller('employee')
+@UseGuards(AuthGuard('jwt'))
 export class EmployeeController {
   constructor(
     private readonly employeeService: EmployeeService
@@ -26,6 +29,7 @@ export class EmployeeController {
   @Post('/')
   async createEmployee(@Body() employeeDto:CreateEmployeeRequest): Promise<EmployeEntity> {
     try {
+      //TODO: El endpoint no deberia de devolver el password del user
       const employeeEntity = CreateEmployeeRequest.convertToEntity(employeeDto)
       return await this.employeeService.createEmployee(employeeEntity)
     } catch (error) {

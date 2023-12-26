@@ -17,6 +17,7 @@ import {
   HttpException,
   HttpStatus
 } from '@nestjs/common';
+import { AuthGuard } from '@nestjs/passport';
 
 @Controller('stay')
 export class StayController {
@@ -25,6 +26,7 @@ export class StayController {
   ) {}
 
   @Post('/')
+  @UseGuards(AuthGuard('jwt'))
   async createStay(@Body() stayDto:CreateStayRequest): Promise<StayEntity> {
     try {
       const stayEntity = CreateStayRequest.getStayEntity(stayDto)
@@ -37,6 +39,7 @@ export class StayController {
   }
 
   @Get('/active')
+  @UseGuards(AuthGuard('jwt'))
   async getActivesStays(): Promise<StayEntity[]> {
     try {
       return await this.stayServices.getActiveStays()
@@ -46,6 +49,7 @@ export class StayController {
   }
 
   @Delete('/')
+  @UseGuards(AuthGuard('jwt'))
   async deleteStays(@Body() body): Promise<boolean> {
     try {
       return await this.stayServices.deleteStays(body.idsStay)

@@ -1,11 +1,12 @@
 import { EmployeeController } from './controllers/employe-controller';
 import { EmployeeRepository } from './repository/employee-repository';
-import { EmployeeService } from './services/employe-services';
-import { SharedModule } from '../shared/shared.module';
-import { Module } from '@nestjs/common';
+import { WorkshiftService } from './services/workshift-services';
 import { RoleController } from './controllers/role-controller';
-import { RoleService } from './services/role-services';
+import { EmployeeService } from './services/employe-services';
 import { RoleRepository } from './repository/role-repository';
+import { SharedModule } from '../shared/shared.module';
+import { RoleService } from './services/role-services';
+import { Module } from '@nestjs/common';
 
 @Module({
   imports: [SharedModule],
@@ -14,8 +15,9 @@ import { RoleRepository } from './repository/role-repository';
     EmployeeService,
     EmployeeRepository,
     RoleService,
-    RoleRepository
+    RoleRepository,
+    WorkshiftService,
   ],
-  exports: []
+  exports: [EmployeeService, RoleService]
 })
 export class EmployeesModule {}
