@@ -2,7 +2,7 @@ import { RoleService } from '../services/role-services';
 import { RoleEntity } from '../domain/role-entity';
 import { 
   Controller,
-  Get, 
+  Get,
   HttpException,
   HttpStatus,
   UseGuards

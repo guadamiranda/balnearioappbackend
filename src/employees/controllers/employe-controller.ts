@@ -18,7 +18,6 @@ import {
 import { UpdateEmployeeRequest } from './dto/update-employee-request';
 import { AuthGuard } from '@nestjs/passport';
 
-
 @Controller('employee')
 @UseGuards(AuthGuard('jwt'))
 export class EmployeeController {
