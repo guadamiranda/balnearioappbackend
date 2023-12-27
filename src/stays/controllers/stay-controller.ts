@@ -15,7 +15,8 @@ import {
   Body,
   UseGuards,
   HttpException,
-  HttpStatus
+  HttpStatus,
+  Request
 } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 
@@ -27,10 +28,10 @@ export class StayController {
 
   @Post('/')
   @UseGuards(AuthGuard('jwt'))
-  async createStay(@Body() stayDto:CreateStayRequest): Promise<StayEntity> {
+  async createStay(@Body() stayDto:CreateStayRequest, @Request() req): Promise<StayEntity> {
     try {
       const stayEntity = CreateStayRequest.getStayEntity(stayDto)
-      const groupEntity = CreateGroupRequest.getGroupEntity(stayDto.group)
+      const groupEntity = CreateGroupRequest.getGroupEntity(stayDto.group, req.user.workshiftId)
       const visitorEntitys = stayDto.visitors.map(visitor => CreateVisitorRequest.getVisitorEntity(visitor))
       return await this.stayServices.initializeStay(stayEntity, groupEntity, visitorEntitys)
     } catch (error) {
@@ -149,3 +150,4 @@ export class StayController {
     throw new HttpException('Error, something went wrong', HttpStatus.INTERNAL_SERVER_ERROR)
   }*/
 }
+

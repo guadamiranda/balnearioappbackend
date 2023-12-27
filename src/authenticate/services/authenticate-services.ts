@@ -1,3 +1,4 @@
+import { WorkshiftService } from "../../employees/services/workshift-services";
 import { EmployeeService } from "../../employees/services/employe-services";
 import { RoleService } from "../../employees/services/role-services";
 import { Injectable } from "@nestjs/common";
@@ -8,6 +9,7 @@ import * as bcrypt from 'bcrypt'
 export class AuthenticateServices {
     constructor(
         private readonly employeeService: EmployeeService,
+        private readonly workshiftService: WorkshiftService,
         private readonly roleService: RoleService,
         private readonly jwtService: JwtService
     ) {}
@@ -27,18 +29,22 @@ export class AuthenticateServices {
         const employee = await this.validateUser(user.dni,  user.password)
         if(!employee) return false
         
+        const isAdmin = await this.isAdminUser(employee.roleId)
+        const workshift = await this.workshiftService.initWorkshift(employee.dni)
         return {
             access_token: this.jwtService.sign({
                 dni: employee.dni,
-                roleId: employee.roleId
+                roleId: employee.roleId,
+                workshiftId: workshift.id
             }),
             firstName: employee.firstName,
             lastName: employee.lastName,
-            email: employee.email
+            email: employee.email,
+            isAdmin
         }
     }
 
-    async isAdminUser(roleId) {
+    async isAdminUser(roleId): Promise<boolean> {
         return await this.roleService.isAdminId(roleId)
     }
 }

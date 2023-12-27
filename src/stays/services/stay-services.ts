@@ -35,6 +35,7 @@ export class StayServices {
         await this.animalServices.registerAnimals(animalEntity, groupEntity.id)
 
         stayEntity.completeStay(groupEntity, visitorEntitys)
+        console.log('Finish Creation Stay')
         return stayEntity
     }
 

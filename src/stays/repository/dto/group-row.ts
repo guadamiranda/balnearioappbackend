@@ -2,7 +2,7 @@ import { GroupEntity } from "../../domain/group-entity"
 
 export class GroupRow {
     id: string
-    id_employee: string
+    id_workshift: string
     id_campsite: string
     car_plate: string
     id_stay: string
@@ -11,7 +11,7 @@ export class GroupRow {
         const table = new GroupRow()
         table.id = entity.id
         table.id_stay = entity.idStay
-        table.id_employee = entity.idEmployee
+        table.id_workshift = entity.idWorkshift
         table.id_campsite = entity.idCampsite
         table.car_plate = entity.carPlate
         return table
@@ -19,7 +19,7 @@ export class GroupRow {
 
     static convertTableToEntity(tableRow: GroupRow): GroupEntity {
         const groupEntity = new GroupEntity(
-            tableRow.id_employee, 
+            tableRow.id_workshift, 
             tableRow.id_campsite,
             tableRow.car_plate
         )

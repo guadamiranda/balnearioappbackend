@@ -3,13 +3,13 @@ import { AnimalEntity } from "./animal-entity"
 export class GroupEntity {
     id: string
     idStay: string
-    idEmployee: string
+    idWorkshift: string
     idCampsite: string
     carPlate: string
     animals?: AnimalEntity
 
-    constructor(idEmployee, idCampsite, carPlate) {
-        this.idEmployee = idEmployee,
+    constructor(idWorkshift, idCampsite, carPlate) {
+        this.idWorkshift = idWorkshift,
         this.idCampsite = idCampsite,
         this.carPlate = carPlate
     }
