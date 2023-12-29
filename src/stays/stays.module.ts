@@ -13,10 +13,16 @@ import { VehicleServices } from './services/vehicle-services';
 import { AnimalServices } from './services/animal-services';
 import { AnimalRepository } from './repository/animal-repository';
 import { Module } from '@nestjs/common';
+import { PriceController } from './controllers/price-controller';
+import { DiscountController } from './controllers/discount-controllers';
+import { PriceServices } from './services/price-services';
+import { PriceRepository } from './repository/price-repository';
+import { DiscountServices } from './services/discount-services';
+import { DiscountRepository } from './repository/discount-repository';
 
 @Module({
   imports: [SharedModule],
-  controllers: [StayController],
+  controllers: [StayController, PriceController, DiscountController],
   providers: [
     StayServices, 
     StayRepository, 
@@ -29,7 +35,11 @@ import { Module } from '@nestjs/common';
     VehicleServices,
     VehicleRepository,
     AnimalServices,
-    AnimalRepository
+    AnimalRepository,
+    PriceServices,
+    PriceRepository,
+    DiscountServices,
+    DiscountRepository
   ],
   exports: [
 

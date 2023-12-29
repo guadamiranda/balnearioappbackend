@@ -3,16 +3,16 @@ import { GroupEntity } from "./group-entity"
 
 export class StayEntity {
     id: string
-    initDate: string
-    finishDate: string
+    initDate: number
+    finishDate: number
     amount: number
     stayType: string
     group?: GroupEntity
     visitors?: VisitorEntity[]
 
     constructor(initDate, finishDate, amount, stayType) {
-        this.initDate = initDate,
-        this.finishDate = finishDate,
+        this.initDate = parseFloat(initDate),
+        this.finishDate = parseFloat(finishDate),
         this.amount = amount,
         this.stayType = stayType
     }
