@@ -1,6 +1,6 @@
-import { StayEntity } from "src/stays/domain/stay-entity"
-import { CreateGroupRequest } from "./create-group-request"
 import { CreateVisitorRequest } from "./create-visitor-request"
+import { CreateGroupRequest } from "./create-group-request"
+import { StayEntity } from "src/stays/domain/stay-entity"
 
 export class CreateStayRequest {
     initDate: string
