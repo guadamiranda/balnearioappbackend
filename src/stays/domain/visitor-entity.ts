@@ -26,4 +26,8 @@ export class VisitorEntity {
     setId(id: string) {
         this.id = id
     }
+
+    addPersonInfo(person: PersonEntity) {
+        this.person = person
+    }
 }

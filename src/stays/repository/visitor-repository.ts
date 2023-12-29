@@ -47,6 +47,19 @@ export class VisitorRepository {
         }
         return true
     }
+
+    async findVisitorsByIdGroup(id: string): Promise<VisitorEntity[]> {
+        const {data: visitorQuery, error} = await this.repository
+        .from(this.VISITOR_TABLE_NAME)
+        .select()
+        .eq('id_group', id)
+
+        if(error) {
+            console.log("Error en la obtencion de los visitantes. \n", error)
+            return null
+        }
+        return VisitorRow.convertTableToEntity(visitorQuery as VisitorRow[])
+    }
     
     private setIdsOnEntitys(visitorEntitys: VisitorEntity[], visitorRows: VisitorRow[]) {
         const indexVisitors = visitorRows.reduce((acc, visitor) => {

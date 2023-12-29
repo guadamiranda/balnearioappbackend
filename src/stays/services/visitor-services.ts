@@ -28,4 +28,19 @@ export class VisitorServices{
             throw Error('Error deleting visitors')
         return true
     }
+
+    async findVisitorsByIdGroup(id: string): Promise<VisitorEntity[]> {
+        console.log('Buscando Visitors del grupo: ', id)
+        const visitors = await this.visitorRepository.findVisitorsByIdGroup(id)
+        if(!visitors) 
+            throw Error('Error fetching visitors')
+
+        const persons = await this.personServices.findPersons(visitors.map(visitor => parseInt(visitor.nroDoc)))
+        visitors.forEach((visitor) => {
+            const selectedPerson = persons.find(person => person.nroDoc.toString() == visitor.nroDoc)
+            if(selectedPerson) visitor.addPersonInfo(selectedPerson)
+        })
+
+        return visitors
+    }
 }

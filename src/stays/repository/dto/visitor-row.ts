@@ -17,4 +17,18 @@ export class VisitorRow {
         table.id_discount = visitorEntity.idDiscount? visitorEntity.idDiscount : null
         return table
     }
+
+    static convertTableToEntity(rows: VisitorRow[]): VisitorEntity[] {
+        return rows.map(row => {
+            const entity = new VisitorEntity(
+                row.wristband_number,
+                row.is_manager,
+                row.nro_doc
+            )
+            entity.setIdGroup(row.id_group)
+            entity.setId(row.id)
+            entity.setIdDiscount(row.id_discount)
+            return entity
+        })
+    }
 }

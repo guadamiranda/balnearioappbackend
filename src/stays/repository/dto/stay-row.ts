@@ -20,8 +20,8 @@ export class StayRow {
 
     static convertTableToEntity(tableRow: StayRow): StayEntity {
         const stayEntity = new StayEntity(
-            tableRow.init_date.toString(), 
-            tableRow.finish_date.toString(), 
+            new Date(tableRow.init_date).getTime(), 
+            new Date(tableRow.finish_date).getTime(), 
             tableRow.amount, 
             tableRow.stay_type
         )

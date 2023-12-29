@@ -82,10 +82,22 @@ export class StayServices {
 
     async findStay(ids: string[]): Promise<StayEntity[]> {
         const foundStays = await this.stayRepository.findStays(ids)
-        if(!foundStays)
+        if(foundStays.length == 0)
             throw Error('Error finding stay')
 
         return foundStays
+    }
+
+    async findSpecificStay(ids: string[]): Promise<any> {
+        const foundStay = await this.findStay(ids)
+        const foundGroup = await this.groupServices.findGroupsByIdsStay([foundStay[0].id])
+        const foundVisitors = await this.visitorServices.findVisitorsByIdGroup(foundGroup[0].id)
+
+        return {
+            stay: foundStay[0],
+            group: foundGroup[0],
+            visitors: foundVisitors
+        }
     }
 
 }
