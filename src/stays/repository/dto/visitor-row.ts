@@ -14,7 +14,7 @@ export class VisitorRow {
         table.wristband_number = visitorEntity.wristbandNumber
         table.is_manager = visitorEntity.isManager
         table.nro_doc = visitorEntity.nroDoc
-        table.id_discount = visitorEntity.idDiscount
+        table.id_discount = visitorEntity.idDiscount? visitorEntity.idDiscount : null
         return table
     }
 }
