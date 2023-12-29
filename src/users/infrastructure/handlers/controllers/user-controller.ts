@@ -10,7 +10,7 @@ import { DeleteRoleCommand } from 'src/users/application/commands/delete-role-co
 import { IGetRolesUseCase } from 'src/users/application/get-roles-use-case-interface';
 import { CreateRoleCommand } from '../../../application/commands/create-role-command';
 import { EmployeGuard } from '../../../../shared/infrastructure/guards/employe-guard';
-import { AdminGuard } from '../../../../shared/infrastructure/guards/admin-guard';
+import { AdminGuard } from '../../../../authenticate/guards/admin-guard';
 import { DeleteRoleResponseDto } from '../dto/response/delete-role-response.dto';
 import { ICreateUseCase } from '../../../application/create-use-case-interface';
 import { IDeleteUseCase } from '../../../application/delete-use-case-interface';

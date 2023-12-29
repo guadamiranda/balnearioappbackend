@@ -1,6 +1,7 @@
 import { Injectable } from "@nestjs/common";
 import { EmployeEntity } from "../domain/employe-entity";
 import { EmployeeRepository } from "../repository/employee-repository";
+import * as bcrypt from 'bcrypt'
 
 @Injectable()
 export class EmployeeService {
@@ -13,10 +14,14 @@ export class EmployeeService {
         if(!this.isEmptyObject(foundEmployee)) {
             throw new Error(`El empleado con el dni ${employeeEntity.dni} ya existe`)
         }
-        return await this.employeeRepository.create(employeeEntity)
+
+        return await this.employeeRepository.create({
+            ...employeeEntity, 
+            password: await bcrypt.hash(employeeEntity.password, 5)
+        })
     }
 
-    private async findEmployee(dni: string): Promise<EmployeEntity> {
+    async findEmployee(dni: string): Promise<EmployeEntity> {
         const employee = await this.employeeRepository.findOne(dni)
         return employee
     }

@@ -2,12 +2,15 @@ import { RoleService } from '../services/role-services';
 import { RoleEntity } from '../domain/role-entity';
 import { 
   Controller,
-  Get, 
+  Get,
   HttpException,
-  HttpStatus
+  HttpStatus,
+  UseGuards
 } from '@nestjs/common';
+import { AuthGuard } from '@nestjs/passport';
 
 @Controller('role')
+@UseGuards(AuthGuard('jwt'))
 export class RoleController {
   constructor(
     private readonly roleService: RoleService

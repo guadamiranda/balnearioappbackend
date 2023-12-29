@@ -3,13 +3,12 @@ import { GroupEntity } from "../../domain/group-entity"
 
 export class CreateGroupRequest {
     idCampsite: string
-    idEmployee: string
     carPlate: string
     quantityAnimals: number
 
-    static getGroupEntity(createGroupRequest: CreateGroupRequest) {
+    static getGroupEntity(createGroupRequest: CreateGroupRequest, idWorkshift: string): GroupEntity {
         const entity = new GroupEntity(
-            createGroupRequest.idEmployee,
+            idWorkshift,
             createGroupRequest.idCampsite,
             createGroupRequest.carPlate
         )

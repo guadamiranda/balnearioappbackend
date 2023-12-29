@@ -14,6 +14,7 @@ async function bootstrap() {
   app.setGlobalPrefix(BASE_PATH);
   app.get(IRepositoryConnection).createConnection();
   app.enableCors();
+  //Habilita las validaciones con el decorador del class-validator 
   app.useGlobalPipes(new ValidationPipe());
   await app.listen(port , () => console.log(`Listening port: ${port}`));
 }

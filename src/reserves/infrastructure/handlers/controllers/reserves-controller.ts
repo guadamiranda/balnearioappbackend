@@ -27,7 +27,7 @@ import { EmployeGuard } from '../../../../shared/infrastructure/guards/employe-g
 import { CreateCommand } from '../../../application/use-cases/command/create-command';
 import { SpecificReserveQueryDto } from '../dto/request/reserve-specific-request.dto';
 import { DeleteCommand } from '../../../application/use-cases/command/delete-command';
-import { AdminGuard } from '../../../../shared/infrastructure/guards/admin-guard';
+import { AdminGuard } from '../../../../authenticate/guards/admin-guard';
 import { ReserveCreateBodyDto } from '../dto/request/reserve-create-request.dto';
 import { DiscountEntity } from '../../../domain/discount-entity';
 import { ReserveEntity } from '../../../domain/reserve-entity';
