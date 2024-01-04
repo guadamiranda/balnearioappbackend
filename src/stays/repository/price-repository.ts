@@ -25,4 +25,35 @@ export class PriceRepository {
         
         return PriceRow.convertTableToEntity(priceQuery as PriceRow[])
     }
+
+    async findOne(id:String) : Promise<PriceEntity> {
+        const {data: priceQuery, error} = await this.repository
+            .from(this.PRICE_TABLE_NAME)
+            .select()
+            .eq('id', id)
+        
+        if(error){
+            console.log("Error consultando el precio" ,error)
+            return null
+        }
+
+        if(priceQuery.length === 0) return null
+
+        return PriceRow.convertTableToEntity(priceQuery as PriceRow[])[0]
+    }
+
+    async updateOne(id: string, amount: number): Promise<PriceEntity> {
+        const {data: priceQuery, error} = await this.repository
+            .from(this.PRICE_TABLE_NAME)
+            .update({amount: amount})
+            .eq('id', id)
+            .select()
+
+        if(error){
+            console.log("Error actualizando el precio" ,error)
+            return null
+        }
+
+        return PriceRow.convertTableToEntity(priceQuery as PriceRow[])[0] 
+    }
 }

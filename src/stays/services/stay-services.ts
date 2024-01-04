@@ -48,12 +48,24 @@ export class StayServices {
         return stayEntity
     }
 
-    async getActiveStays(): Promise<StayEntity[]> {
-        const staysActives = this.stayRepository.getActiveStays()
+    async getActiveStays(): Promise<any[]> {
+        const response = []
+        const staysActives = await this.stayRepository.getActiveStays()
+        for(let i = 0; i < staysActives.length; i++) {
+            const selectedStay: StayEntity = staysActives[i]
+            const groupActives = await this.groupServices.findGroupsByIdsStay([selectedStay.id])
+            const visitorActives: VisitorEntity[] = await this.visitorServices.findVisitorsByIdGroup(groupActives[0].id)
+            const visitorsManager: VisitorEntity[] = visitorActives.filter(visitor => visitor.isManager)
+            response.push({
+                ...selectedStay,
+                dni: visitorsManager[0].nroDoc,
+                name: visitorsManager[0].person.firstName + ' ' + visitorsManager[0].person.lastName
+            })
+        }
 
         if(!staysActives) 
             throw Error('Error fetching actives stays')
-        return staysActives
+        return response
     }
 
     async deleteStays(ids: string[]): Promise<any> {

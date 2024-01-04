@@ -7,7 +7,10 @@ import {
   UseGuards,
   HttpException,
   HttpStatus,
-  Request
+  Request,
+  Put,
+  Param,
+  Body
 } from '@nestjs/common';
 
 @Controller('price')
@@ -21,6 +24,15 @@ export class PriceController {
   async getAllPrices(@Request() req): Promise<PriceEntity[]> {
     try {
       return await this.priceServices.getAllPrices()
+    } catch (error) {
+      throw new HttpException(error.message, HttpStatus.INTERNAL_SERVER_ERROR)
+    }
+  }
+
+  @Put('/:id')
+  async updatePrice(@Param('id') id: string, @Body() body): Promise<PriceEntity> {
+    try {
+      return await this.priceServices.updatePrice(id, body.amount)
     } catch (error) {
       throw new HttpException(error.message, HttpStatus.INTERNAL_SERVER_ERROR)
     }
