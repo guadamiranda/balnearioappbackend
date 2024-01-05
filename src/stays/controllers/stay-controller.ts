@@ -51,7 +51,7 @@ export class StayController {
   @Delete('/')
   async deleteStays(@Body() body): Promise<boolean> {
     try {
-      return await this.stayServices.deleteStays(body.idsStay)
+      return await this.stayServices.deleteStays(body.ids)
     } catch (error) {
       throw new HttpException(error.message, HttpStatus.INTERNAL_SERVER_ERROR)
     }
