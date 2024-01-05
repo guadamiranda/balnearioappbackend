@@ -27,6 +27,22 @@ export class GroupRepository {
         return groupEntity
     }
 
+    async findOne(id: string): Promise<GroupEntity> {
+        const {data:groupQuery, error} = await this.repository
+        .from(this.GROUP_TABLE_NAME)
+        .select()
+        .eq('id', id)
+
+        if(error) {
+            console.log("Error buscando grupo \n", error)
+            return null
+        }
+
+        if(groupQuery.length === 0) return null
+
+        return GroupRow.convertTableToEntity(groupQuery[0] as GroupRow)
+    }
+
     async findManyByIdsStay(idsStay: string[]): Promise<GroupEntity[]> {
         const {data:groupQuery, error} = await this.repository
         .from(this.GROUP_TABLE_NAME)

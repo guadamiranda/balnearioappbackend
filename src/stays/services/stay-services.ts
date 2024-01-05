@@ -99,11 +99,28 @@ export class StayServices {
 
         return foundStays
     }
+    
+    async getSpecificStayByDni(dni: string): Promise<any> {
+        const selectedVisitor = await this.visitorServices.findVisitorByDni(dni)
+        const selectedGroup = await this.groupServices.findGroupById(selectedVisitor.idGroup)
+        const allVisitors = await this.visitorServices.findVisitorsByIdGroup(selectedGroup.id)
+        const selectedStay = await this.stayRepository.findStays([selectedGroup.idStay])
+        const animal = await this.animalServices.findAnimalsByIdGroup(selectedGroup.id)
+
+        selectedGroup.setAnimals(animal[0]);
+        return {
+            stay: selectedStay[0],
+            group: selectedGroup,
+            visitors: allVisitors
+        }
+    }
 
     async findSpecificStay(ids: string[]): Promise<any> {
         const foundStay = await this.findStay(ids)
         const foundGroup = await this.groupServices.findGroupsByIdsStay([foundStay[0].id])
         const foundVisitors = await this.visitorServices.findVisitorsByIdGroup(foundGroup[0].id)
+        const foundAnimal = await this.animalServices.findAnimalsByIdGroup(foundGroup[0].id)
+        foundGroup[0].setAnimals(foundAnimal[0])
 
         return {
             stay: foundStay[0],

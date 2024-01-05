@@ -68,6 +68,16 @@ export class StayController {
     }
   }
 
+  @Get('/visitor/:dni')
+  async getSpecificStayByDni(@Param('dni') dni: string): Promise<any> {
+    try {
+      const stay = await this.stayServices.getSpecificStayByDni(dni)
+      return stay
+    } catch (error) {
+      throw new HttpException(error.message, HttpStatus.INTERNAL_SERVER_ERROR)
+    }
+  }
+
   /*@Put(UPDATE_ROLE_PATH)
   async updateRole(@Headers() headers: any, @Param('id') id: string, @Body() body: UpdateRoleBodyDto): Promise<RoleEntity> {
     const updateRoleCommand = new UpdateRoleCommand(

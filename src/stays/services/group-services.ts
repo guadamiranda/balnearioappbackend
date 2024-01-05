@@ -31,4 +31,12 @@ export class GroupServices {
             throw Error('Error deleting groups')
         return true
     }
+
+    async findGroupById(id: string): Promise<GroupEntity> {
+        console.log('Group to be found: ', id)
+        const group = await this.groupRepository.findOne(id)
+        if(!group) 
+            throw Error('Error finding group')
+        return group
+    }
 }

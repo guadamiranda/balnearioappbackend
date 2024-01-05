@@ -14,4 +14,10 @@ export class AnimalRow {
 
         return row
     }
+
+    static convertRowToEntity(row: AnimalRow[]): AnimalEntity[] {
+        return row.map(animal =>
+            new AnimalEntity(animal.quantity, animal.type_animal)
+        )
+    }
 }

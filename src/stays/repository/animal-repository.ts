@@ -40,4 +40,17 @@ export class AnimalRepository {
         }
         return true
     }
+
+    async findByIdGroup(idGroup: string): Promise<AnimalEntity[]> {
+        const {data: animalQuery, error} = await this.repository
+        .from(this.ANIMAL_TABLE_NAME)
+        .select()
+        .eq('id_group', idGroup)
+
+        if(error) {
+            console.log("Error en la busqueda de animales.\n", error)
+            return null
+        }
+        return AnimalRow.convertRowToEntity(animalQuery);
+    }
 }

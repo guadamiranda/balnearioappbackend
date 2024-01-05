@@ -48,6 +48,21 @@ export class VisitorRepository {
         return true
     }
 
+    async findVisitorByDni(nroDoc: string): Promise<VisitorEntity> {
+        const {data: visitorQuery, error} = await this.repository
+        .from(this.VISITOR_TABLE_NAME)
+        .select()
+        .eq('nro_doc', nroDoc)
+
+        if(error) {
+            console.log("Error en la obtencion del visitante. \n", error)
+            return null
+        }
+
+        if(visitorQuery.length === 0) return null
+        return VisitorRow.convertTableToEntity(visitorQuery as VisitorRow[])[0]
+    }
+
     async findVisitorsByIdGroup(id: string): Promise<VisitorEntity[]> {
         const {data: visitorQuery, error} = await this.repository
         .from(this.VISITOR_TABLE_NAME)

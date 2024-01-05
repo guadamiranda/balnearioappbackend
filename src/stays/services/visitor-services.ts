@@ -43,4 +43,14 @@ export class VisitorServices{
 
         return visitors
     }
+
+    async findVisitorByDni(nroDoc: string): Promise<VisitorEntity> {
+        console.log('Visitor to be found: ', nroDoc)
+        const visitor = await this.visitorRepository.findVisitorByDni(nroDoc)
+        //TODO: Esto esta acoplado al front ya que va a mostrar este mensaje, debeira ser un 404
+        if(!visitor)
+            throw Error('No se pudo encontrar el visitante con dni: ' + nroDoc)
+
+        return visitor
+    }
 }

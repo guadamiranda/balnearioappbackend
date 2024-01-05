@@ -21,4 +21,8 @@ export class AnimalServices{
             throw Error('Error deleting animals')
         return true
     }
+
+    async findAnimalsByIdGroup(idGroup: string): Promise<AnimalEntity[]> {
+        return await this.animalRepository.findByIdGroup(idGroup)
+    } 
 }
