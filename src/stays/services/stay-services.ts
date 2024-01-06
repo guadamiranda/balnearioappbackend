@@ -136,6 +136,13 @@ export class StayServices {
     
     async getSpecificStayByDni(dni: string): Promise<any> {
         const selectedVisitor = await this.visitorServices.findVisitorByDni(dni)
+        if(!selectedVisitor){
+            return {
+                status: 404,
+                message: 'Visitor not found'
+            }
+        }
+
         const selectedGroup = await this.groupServices.findGroupById(selectedVisitor.idGroup)
         const allVisitors = await this.visitorServices.findVisitorsByIdGroup(selectedGroup.id)
         const selectedStay = await this.stayRepository.findStays([selectedGroup.idStay])

@@ -49,7 +49,7 @@ export class VisitorServices{
         const visitor = await this.visitorRepository.findVisitorByDni(nroDoc)
         //TODO: Esto esta acoplado al front ya que va a mostrar este mensaje, debeira ser un 404
         if(!visitor)
-            throw Error('No se pudo encontrar el visitante con dni: ' + nroDoc)
+            console.error('No se pudo encontrar el visitante con dni: ' + nroDoc)
 
         return visitor
     }
