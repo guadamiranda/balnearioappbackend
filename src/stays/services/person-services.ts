@@ -36,6 +36,7 @@ export class PersonServices{
 
     async findPersons(nroDoc: number[]): Promise<PersonEntity[]> {
         console.log('Persons to be found: ', nroDoc)
+        if(nroDoc.length == 0) return []
         const personEntitys = await this.personRepository.findPersons(nroDoc)
 
         if(!personEntitys) 

@@ -20,23 +20,43 @@ export class StayServices {
         private readonly animalServices: AnimalServices
     ) {}
     
-    async initializeStay(stayEntity: StayEntity, groupEntity: GroupEntity, visitorEntitys: VisitorEntity[]): Promise<StayEntity> {
+    async initializeStay(
+        stayEntity: StayEntity, 
+        groupEntity: GroupEntity, 
+        visitorEntities: VisitorEntity[]
+        ):Promise<StayEntity> {
         console.log('Initialize stay')
         const vehicleEntity = new VehicleEntity(groupEntity.carPlate);
-        const animalEntity = new AnimalEntity(groupEntity.animals.quantity, groupEntity.animals.typeAnimal);
-        await this.createStay(stayEntity)
+        const animalEntity = new AnimalEntity(
+            groupEntity.animals.quantity,
+            groupEntity.animals.typeAnimal
+        );
+        try {
+            await this.createStay(stayEntity)
 
-        groupEntity.setIdStay(stayEntity.id)
-        await this.vehicleServices.createVehicle(vehicleEntity)
-        await this.groupServices.createGroup(groupEntity)
-
-        visitorEntitys.forEach(visitor => visitor.setIdGroup(groupEntity.id))
-        await this.visitorServices.createManyVisitors(visitorEntitys)
-        await this.animalServices.registerAnimals(animalEntity, groupEntity.id)
-
-        stayEntity.completeStay(groupEntity, visitorEntitys)
-        console.log('Finish Creation Stay')
-        return stayEntity
+            groupEntity.setIdStay(stayEntity.id)
+            await this.vehicleServices.createVehicle(vehicleEntity)
+            await this.groupServices.createGroup(groupEntity)
+    
+            visitorEntities.forEach(visitor => visitor.setIdGroup(groupEntity.id))
+            await this.visitorServices.createManyVisitors(visitorEntities)
+            await this.animalServices.registerAnimals(animalEntity, groupEntity.id)
+    
+            stayEntity.completeStay(groupEntity, visitorEntities)
+            console.log('Finish Creation Stay')
+            return stayEntity
+        } catch (error) {
+            console.log('Something was wrong in the creation of stay, trying to delete wrong stay ', error)
+            if(groupEntity.id) {
+                const idGroup = [groupEntity.id]
+                await this.visitorServices.deleteVisitorsByIdsGroup(idGroup)
+                await this.animalServices.deleteAnimalsByIdsGroup(idGroup)
+                await this.groupServices.deleteGroupsByIds(idGroup)
+            }
+            
+            await this.stayRepository.deleteByIds([stayEntity.id])
+            throw Error(`Something was wrong in the creation of stay ${error.message}`)
+        }
     }
 
     async createStay(stayEntity: StayEntity): Promise<StayEntity> {
@@ -49,9 +69,23 @@ export class StayServices {
     }
 
     async getActiveStays(): Promise<any[]> {
-        const response = []
+        //const response = []
         const staysActives = await this.stayRepository.getActiveStays()
-        for(let i = 0; i < staysActives.length; i++) {
+
+        const response = await Promise.all(staysActives.map(async (selectedStay) => {
+            const groupActives = await this.groupServices.findGroupsByIdsStay([selectedStay.id])
+            const visitorActives = await this.visitorServices.findVisitorsByIdGroup(groupActives[0].id)
+            const visitorsManager = visitorActives.find(visitor => visitor.isManager)
+            if (!visitorsManager) {
+                throw new Error('Error finding visitors manager')
+            }
+            return {
+                ...selectedStay,
+                dni: visitorsManager.nroDoc,
+                name: `${visitorsManager.person.firstName} ${visitorsManager.person.lastName}`
+            }
+        }))
+        /*for(let i = 0; i < staysActives.length; i++) {
             const selectedStay: StayEntity = staysActives[i]
             const groupActives = await this.groupServices.findGroupsByIdsStay([selectedStay.id])
             const visitorActives: VisitorEntity[] = await this.visitorServices.findVisitorsByIdGroup(groupActives[0].id)
@@ -61,7 +95,7 @@ export class StayServices {
                 dni: visitorsManager[0].nroDoc,
                 name: visitorsManager[0].person.firstName + ' ' + visitorsManager[0].person.lastName
             })
-        }
+        }*/
 
         if(!staysActives) 
             throw Error('Error fetching actives stays')
