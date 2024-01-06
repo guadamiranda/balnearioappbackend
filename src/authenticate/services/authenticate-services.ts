@@ -27,8 +27,13 @@ export class AuthenticateServices {
 
     async login(user) {
         const employee = await this.validateUser(user.dni,  user.password)
-        if(!employee) return false
-        
+        if(!employee) {
+            return {
+                status: 401,
+                message: 'Invalid credentials'
+            }
+        }
+
         const isAdmin = await this.isAdminUser(employee.roleId)
         const workshift = await this.workshiftService.initWorkshift(employee.dni)
         return {
