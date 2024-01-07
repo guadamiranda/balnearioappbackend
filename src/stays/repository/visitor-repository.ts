@@ -60,7 +60,7 @@ export class VisitorRepository {
         }
 
         if(visitorQuery.length === 0) return null
-        return VisitorRow.convertTableToEntity(visitorQuery as VisitorRow[])[0]
+        return VisitorRow.convertTableToEntity(visitorQuery as VisitorRow[])[visitorQuery.length - 1]
     }
 
     async findVisitorsByIdGroup(id: string): Promise<VisitorEntity[]> {
