@@ -30,12 +30,38 @@ export class StayController {
   @Post('/')
   async createStay(@Body() stayDto:CreateStayRequest, @Request() req): Promise<StayEntity> {
     try {
-      const stayEntity = CreateStayRequest.getStayEntity(stayDto)
-      const groupEntity = CreateGroupRequest.getGroupEntity(stayDto.group, req.user.workshiftId)
-      const visitorEntitys = stayDto.visitors.map(visitor => CreateVisitorRequest.getVisitorEntity(visitor))
-      return await this.stayServices.initializeStay(stayEntity, groupEntity, visitorEntitys)
+      const {
+        stayEntity,
+        groupEntity,
+        visitorEntities
+      } = this.getEsentialData(stayDto, req.user.workshiftId)
+
+      return await this.stayServices.buildStayCamping(stayEntity, groupEntity, visitorEntities)
     } catch (error) {
       throw new HttpException(error.message, HttpStatus.INTERNAL_SERVER_ERROR)
+    }
+  }
+
+  @Post('/day')
+  async createStayDay(@Body() stayDto:CreateStayRequest, @Request() req): Promise<StayEntity> {
+    try {
+      const {
+        stayEntity,
+        groupEntity,
+        visitorEntities
+      } = this.getEsentialData(stayDto, req.user.workshiftId)
+
+      return await this.stayServices.buildStay(stayEntity, groupEntity, visitorEntities)
+    } catch (error) {
+      throw new HttpException(error.message, HttpStatus.INTERNAL_SERVER_ERROR)
+    }
+  }
+
+  private getEsentialData( stayDto:CreateStayRequest, workshiftId: any) {
+    return {
+      stayEntity: CreateStayRequest.getStayEntity(stayDto),
+      groupEntity: CreateGroupRequest.getGroupEntity(stayDto.group, workshiftId),
+      visitorEntities: stayDto.visitors.map(visitor => CreateVisitorRequest.getVisitorEntity(visitor))
     }
   }
 

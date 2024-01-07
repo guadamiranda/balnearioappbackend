@@ -20,27 +20,26 @@ export class StayServices {
         private readonly animalServices: AnimalServices
     ) {}
     
-    async initializeStay(
-        stayEntity: StayEntity, 
-        groupEntity: GroupEntity, 
-        visitorEntities: VisitorEntity[]
-        ):Promise<StayEntity> {
+    async buildStayCamping(stayEntity: StayEntity, groupEntity: GroupEntity, visitorEntities: VisitorEntity[]):Promise<StayEntity> {
         console.log('Initialize stay')
         const vehicleEntity = new VehicleEntity(groupEntity.carPlate);
         const animalEntity = new AnimalEntity(
             groupEntity.animals.quantity,
             groupEntity.animals.typeAnimal
         );
+        return await this.buildStay(stayEntity, groupEntity, visitorEntities, vehicleEntity, animalEntity)
+    }
+
+    async buildStay(stayEntity: StayEntity, groupEntity: GroupEntity, visitorEntities: VisitorEntity[], vehicleEntity: VehicleEntity = null, animalEntity : AnimalEntity = null):Promise<StayEntity> {
+        console.log('Initialize stay')
         try {
             await this.createStay(stayEntity)
-
             groupEntity.setIdStay(stayEntity.id)
-            await this.vehicleServices.createVehicle(vehicleEntity)
             await this.groupServices.createGroup(groupEntity)
     
-            visitorEntities.forEach(visitor => visitor.setIdGroup(groupEntity.id))
-            await this.visitorServices.createManyVisitors(visitorEntities)
-            await this.animalServices.registerAnimals(animalEntity, groupEntity.id)
+            await this.createVisitors(visitorEntities, groupEntity.id)
+
+            await this.createAdditionalFields(vehicleEntity, animalEntity, groupEntity.id)
     
             stayEntity.completeStay(groupEntity, visitorEntities)
             console.log('Finish Creation Stay')
@@ -56,6 +55,20 @@ export class StayServices {
             
             await this.stayRepository.deleteByIds([stayEntity.id])
             throw Error(`Something was wrong in the creation of stay ${error.message}`)
+        }
+    }
+
+    async createVisitors(visitorEntities: VisitorEntity[], groupEntityId: String) {
+        visitorEntities.forEach(visitor => visitor.setIdGroup(groupEntityId))
+        await this.visitorServices.createManyVisitors(visitorEntities)
+    }
+
+    async createAdditionalFields(vehicleEntity: VehicleEntity | null, animalEntity: AnimalEntity | null, groupEntityId: String) {
+        if(vehicleEntity) {
+            await this.vehicleServices.createVehicle(vehicleEntity)
+        }
+        if(animalEntity) {
+            await this.animalServices.registerAnimals(animalEntity, groupEntityId)
         }
     }
 

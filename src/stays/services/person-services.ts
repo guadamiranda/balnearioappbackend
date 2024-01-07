@@ -53,14 +53,23 @@ export class PersonServices{
         return createdPersons
     }
 
-    async updatePersons(personEntitys: PersonEntity[]): Promise<PersonEntity[]> {
-        console.log('Persons to be updated: ', personEntitys)
-        const updatedPersons = await this.personRepository.updateManyPerson(personEntitys)
+    async updatePersons(personEntities: PersonEntity[]): Promise<PersonEntity[]> {
+        console.log('Persons to be updated: ', personEntities)
+
+        const personEntitiesWithData = personEntities.filter(personEntity => personEntity.firstName && personEntity.lastName)
+
+        const updatedPersons = await Promise.all(personEntitiesWithData.map(async (personEntity) => {
+            return await this.personRepository.updatePerson(personEntity)
+        }))
 
         if(!updatedPersons)
             throw Error('Error updating persons')
         return updatedPersons
     }
+
+
+
+
 
     private getIndexedEntitys(personEntitys: PersonEntity[]) {
         if(personEntitys.length == 0) return {}
