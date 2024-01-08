@@ -33,10 +33,16 @@ export class EmployeeService {
     async updateEmployee(employeeEntity: EmployeEntity): Promise<EmployeEntity> {
         console.log('Se va a actualizar al empleado: ', employeeEntity)
         const foundEmployee = await this.findEmployee(employeeEntity.dni)
+
+
         //TODO: Implementar codigos de expecion para no tirar un error si no tirar un codigo que lo catche una capa superior y envie un 404 no un 500
         if(this.isEmptyObject(foundEmployee)) {
             throw new Error(`El empleado con el dni ${employeeEntity.dni} no existe`)
         }
+        if(foundEmployee.password != employeeEntity.password) {
+            employeeEntity.password = await bcrypt.hash(employeeEntity.password, 5)
+        }
+        
         return await this.employeeRepository.updateOne(employeeEntity)
     }
 
