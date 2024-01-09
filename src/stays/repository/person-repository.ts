@@ -26,7 +26,7 @@ export class PersonRepository {
     }
 
     async createManyPerson(personEntitys: PersonEntity[]): Promise<PersonEntity[]> {
-        const personRows = PersonRow.convertPersonEntityToRow(personEntitys)
+        const personRows = PersonRow.convertPersonEntitiesToRow(personEntitys)
 
         const {data:personQuery, error} = await this.repository
         .from(this.PERSON_TABLE_NAME)
@@ -42,7 +42,7 @@ export class PersonRepository {
     }
 
     async updateManyPerson(personEntity: PersonEntity[]): Promise<PersonEntity[]> {
-        const personRows = PersonRow.convertPersonEntityToRow(personEntity);
+        const personRows = PersonRow.convertPersonEntitiesToRow(personEntity);
         //const nroDocs = personEntity.map(entity => entity.nroDoc);
 
         const personEntitys = await Promise.all(personRows.map(async (person) => {
@@ -84,6 +84,47 @@ export class PersonRepository {
         */
 
         return personEntitys
+    }
+
+    async updatePerson(person: PersonEntity): Promise<PersonEntity> {
+        const personRow = PersonRow.convertPersonEntityToRow(person);
+        
+        const {data:personQuery, error} = await this.repository
+        .from(this.PERSON_TABLE_NAME)
+        .update({
+            first_name: personRow.first_name,
+            last_name: personRow.last_name,
+            phone: personRow.phone,
+            location: personRow.location
+        })
+        .eq('nro_doc', personRow.nro_doc)
+        .select()
+
+        if(error) {
+            console.log(error)
+            return null
+        }
+
+        return PersonRow.convertRowsToPersonEntitys(personQuery as PersonRow[])[0]
+        
+
+        /*
+            const personRows = PersonRow.convertPersonEntityToRow(personEntity);
+            const nroDocs = personEntity.map(entity => entity.nroDoc);
+
+            const {data:personQuery, error} = await this.repository
+            .from(this.PERSON_TABLE_NAME)
+            .update(personRows)
+            .in('nro_doc', nroDocs)
+            .select()
+
+            if(error) {
+                console.log(error)
+                return null
+            }
+
+            return PersonRow.convertRowsToPersonEntitys(personQuery as PersonRow[])
+        */
     }
 
     private setIdsOnEntitys(personEntitys: PersonEntity[], personRows: PersonRow[]) {

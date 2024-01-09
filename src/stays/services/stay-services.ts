@@ -1,3 +1,4 @@
+import { StayTypeRepository } from "../repository/stay-type-repository";
 import { StayRepository } from "../repository/stay-repository";
 import { VisitorEntity } from "../domain/visitor-entity";
 import { VisitorServices } from "./visitor-services";
@@ -17,30 +18,37 @@ export class StayServices {
         private readonly groupServices: GroupServices,
         private readonly visitorServices: VisitorServices,
         private readonly vehicleServices: VehicleServices,
-        private readonly animalServices: AnimalServices
+        private readonly animalServices: AnimalServices,
+        private readonly stayTypeRepository: StayTypeRepository
     ) {}
     
-    async initializeStay(
-        stayEntity: StayEntity, 
-        groupEntity: GroupEntity, 
-        visitorEntities: VisitorEntity[]
-        ):Promise<StayEntity> {
+    async buildStayCamping(stayEntity: StayEntity, groupEntity: GroupEntity, visitorEntities: VisitorEntity[]):Promise<StayEntity> {
         console.log('Initialize stay')
         const vehicleEntity = new VehicleEntity(groupEntity.carPlate);
         const animalEntity = new AnimalEntity(
             groupEntity.animals.quantity,
             groupEntity.animals.typeAnimal
         );
+        return await this.buildStay(stayEntity, groupEntity, visitorEntities, vehicleEntity, animalEntity)
+    }
+
+    async buildStay(stayEntity: StayEntity, groupEntity: GroupEntity, visitorEntities: VisitorEntity[], vehicleEntity: VehicleEntity = null, animalEntity : AnimalEntity = null):Promise<StayEntity> {
+        console.log('Initialize stay')
         try {
             await this.createStay(stayEntity)
-
             groupEntity.setIdStay(stayEntity.id)
-            await this.vehicleServices.createVehicle(vehicleEntity)
+
+            if(vehicleEntity) {
+                await this.vehicleServices.createVehicle(vehicleEntity)
+            }
+
             await this.groupServices.createGroup(groupEntity)
     
-            visitorEntities.forEach(visitor => visitor.setIdGroup(groupEntity.id))
-            await this.visitorServices.createManyVisitors(visitorEntities)
-            await this.animalServices.registerAnimals(animalEntity, groupEntity.id)
+            if(animalEntity) {
+                await this.animalServices.registerAnimals(animalEntity, groupEntity.id)
+            }
+
+            await this.createVisitors(visitorEntities, groupEntity.id)
     
             stayEntity.completeStay(groupEntity, visitorEntities)
             console.log('Finish Creation Stay')
@@ -59,6 +67,16 @@ export class StayServices {
         }
     }
 
+    async createVisitors(visitorEntities: VisitorEntity[], groupEntityId: String) {
+        visitorEntities.forEach(visitor => visitor.setIdGroup(groupEntityId))
+        await this.visitorServices.createManyVisitors(visitorEntities)
+    }
+
+    async createAdditionalFields(vehicleEntity: VehicleEntity | null, animalEntity: AnimalEntity | null, groupEntityId: String) {
+
+
+    }
+
     async createStay(stayEntity: StayEntity): Promise<StayEntity> {
         console.log('Stay to be created: ', stayEntity)
         const createdStay = await this.stayRepository.createStay(stayEntity);
@@ -69,33 +87,26 @@ export class StayServices {
     }
 
     async getActiveStays(): Promise<any[]> {
-        //const response = []
         const staysActives = await this.stayRepository.getActiveStays()
+        const stayTypes = await this.stayTypeRepository.getAllStayTypes()
 
         const response = await Promise.all(staysActives.map(async (selectedStay) => {
             const groupActives = await this.groupServices.findGroupsByIdsStay([selectedStay.id])
             const visitorActives = await this.visitorServices.findVisitorsByIdGroup(groupActives[0].id)
             const visitorsManager = visitorActives.find(visitor => visitor.isManager)
+            const selectedStayType = stayTypes.find(stayType => stayType.id === selectedStay.stayType)
+            selectedStay.stayType = selectedStayType.name
+
             if (!visitorsManager) {
                 throw new Error('Error finding visitors manager')
             }
+
             return {
                 ...selectedStay,
                 dni: visitorsManager.nroDoc,
                 name: `${visitorsManager.person.firstName} ${visitorsManager.person.lastName}`
             }
         }))
-        /*for(let i = 0; i < staysActives.length; i++) {
-            const selectedStay: StayEntity = staysActives[i]
-            const groupActives = await this.groupServices.findGroupsByIdsStay([selectedStay.id])
-            const visitorActives: VisitorEntity[] = await this.visitorServices.findVisitorsByIdGroup(groupActives[0].id)
-            const visitorsManager: VisitorEntity[] = visitorActives.filter(visitor => visitor.isManager)
-            response.push({
-                ...selectedStay,
-                dni: visitorsManager[0].nroDoc,
-                name: visitorsManager[0].person.firstName + ' ' + visitorsManager[0].person.lastName
-            })
-        }*/
 
         if(!staysActives) 
             throw Error('Error fetching actives stays')

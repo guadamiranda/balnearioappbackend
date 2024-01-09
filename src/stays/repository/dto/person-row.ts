@@ -21,16 +21,20 @@ export class PersonRow {
         })
     }
 
-    static convertPersonEntityToRow(personEntitys: PersonEntity[]): PersonRow[] {
-        return personEntitys.map((personEntity) => {
-            const personRow = new PersonRow();
-            personRow.nro_doc = personEntity.nroDoc
-            personRow.first_name = personEntity.firstName
-            personRow.last_name = personEntity.lastName
-            personRow.phone = personEntity.phone
-            personRow.location = personEntity.location
-            personRow.member_num = personEntity.memberNum
-            return personRow
+    static convertPersonEntitiesToRow(personEntities: PersonEntity[]): PersonRow[] {
+        return personEntities.map((personEntity) => {
+            return this.convertPersonEntityToRow(personEntity)
         })
+    }
+
+    static convertPersonEntityToRow(personEntity: PersonEntity): PersonRow {
+        const personRow = new PersonRow();
+        personRow.nro_doc = personEntity.nroDoc
+        personRow.first_name = personEntity.firstName
+        personRow.last_name = personEntity.lastName
+        personRow.phone = personEntity.phone
+        personRow.location = personEntity.location
+        personRow.member_num = personEntity.memberNum
+        return personRow
     }
 }

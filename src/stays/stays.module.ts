@@ -19,6 +19,7 @@ import { PriceServices } from './services/price-services';
 import { PriceRepository } from './repository/price-repository';
 import { DiscountServices } from './services/discount-services';
 import { DiscountRepository } from './repository/discount-repository';
+import { StayTypeRepository } from './repository/stay-type-repository';
 
 @Module({
   imports: [SharedModule],
@@ -39,7 +40,8 @@ import { DiscountRepository } from './repository/discount-repository';
     PriceServices,
     PriceRepository,
     DiscountServices,
-    DiscountRepository
+    DiscountRepository,
+    StayTypeRepository
   ],
   exports: [
 
