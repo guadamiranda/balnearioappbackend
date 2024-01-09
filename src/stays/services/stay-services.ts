@@ -158,6 +158,9 @@ export class StayServices {
         const allVisitors = await this.visitorServices.findVisitorsByIdGroup(selectedGroup.id)
         const selectedStay = await this.stayRepository.findStays([selectedGroup.idStay])
         const animal = await this.animalServices.findAnimalsByIdGroup(selectedGroup.id)
+        const stayTypes = await this.stayTypeRepository.getAllStayTypes()
+        const selectedStayType = stayTypes.find(stayType => stayType.id === selectedStay[0].stayType)
+        selectedStay[0].stayType = selectedStayType.name
 
         selectedGroup.setAnimals(animal[0]);
         return {
