@@ -8,11 +8,11 @@ import { EmployeeService } from './services/employe-services';
 import { RoleRepository } from './repository/role-repository';
 import { SharedModule } from '../shared/shared.module';
 import { RoleService } from './services/role-services';
+import { StaysModule } from '../stays/stays.module';
 import { Module } from '@nestjs/common';
 
-
 @Module({
-  imports: [SharedModule],
+  imports: [SharedModule, StaysModule],
   controllers: [EmployeeController, RoleController, WorkshiftController],
   providers: [
     EmployeeService,

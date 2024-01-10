@@ -1,15 +1,17 @@
+import { WorkshiftEntity } from "../../employees/domain/workshift-entity";
 import { StayTypeRepository } from "../repository/stay-type-repository";
 import { StayRepository } from "../repository/stay-repository";
+import { VehicleEntity } from "../domain/vehicle-entity";
 import { VisitorEntity } from "../domain/visitor-entity";
+import { AnimalEntity } from "../domain/animal-entity";
+import { VehicleServices } from "./vehicle-services";
+import { GroupEntity } from "../domain/group-entity";
 import { VisitorServices } from "./visitor-services";
+import { PersonServices } from "./person-services";
 import { StayEntity } from "../domain/stay-entity";
+import { AnimalServices } from "./animal-services";
 import { GroupServices } from "./group-services";
 import { Injectable } from "@nestjs/common";
-import { GroupEntity } from "../domain/group-entity";
-import { AnimalServices } from "./animal-services";
-import { VehicleServices } from "./vehicle-services";
-import { VehicleEntity } from "../domain/vehicle-entity";
-import { AnimalEntity } from "../domain/animal-entity";
 
 @Injectable()
 export class StayServices {
@@ -19,7 +21,8 @@ export class StayServices {
         private readonly visitorServices: VisitorServices,
         private readonly vehicleServices: VehicleServices,
         private readonly animalServices: AnimalServices,
-        private readonly stayTypeRepository: StayTypeRepository
+        private readonly stayTypeRepository: StayTypeRepository,
+        private readonly personServices: PersonServices
     ) {}
     
     async buildStayCamping(stayEntity: StayEntity, groupEntity: GroupEntity, visitorEntities: VisitorEntity[]):Promise<StayEntity> {
@@ -72,11 +75,6 @@ export class StayServices {
         await this.visitorServices.createManyVisitors(visitorEntities)
     }
 
-    async createAdditionalFields(vehicleEntity: VehicleEntity | null, animalEntity: AnimalEntity | null, groupEntityId: String) {
-
-
-    }
-
     async createStay(stayEntity: StayEntity): Promise<StayEntity> {
         console.log('Stay to be created: ', stayEntity)
         const createdStay = await this.stayRepository.createStay(stayEntity);
@@ -88,29 +86,15 @@ export class StayServices {
 
     async getActiveStays(): Promise<any[]> {
         const staysActives = await this.stayRepository.getActiveStays()
-        const stayTypes = await this.stayTypeRepository.getAllStayTypes()
-
-        const response = await Promise.all(staysActives.map(async (selectedStay) => {
-            const groupActives = await this.groupServices.findGroupsByIdsStay([selectedStay.id])
-            const visitorActives = await this.visitorServices.findVisitorsByIdGroup(groupActives[0].id)
-            const visitorsManager = visitorActives.find(visitor => visitor.isManager)
-            const selectedStayType = stayTypes.find(stayType => stayType.id === selectedStay.stayType)
-            selectedStay.stayType = selectedStayType.name
-
-            if (!visitorsManager) {
-                throw new Error('Error finding visitors manager')
-            }
-
+        await this.completeDataStay(staysActives)
+        return staysActives.map(stay => {
+            const manager = stay.getManager()
             return {
-                ...selectedStay,
-                dni: visitorsManager.nroDoc,
-                name: `${visitorsManager.person.firstName} ${visitorsManager.person.lastName}`
+                ...stay,
+                dni: manager.nroDoc,
+                phone: manager.person?.phone
             }
-        }))
-
-        if(!staysActives) 
-            throw Error('Error fetching actives stays')
-        return response
+        })
     }
 
     async deleteStays(ids: string[]): Promise<any> {
@@ -147,7 +131,7 @@ export class StayServices {
     
     async getSpecificStayByDni(dni: string): Promise<any> {
         const selectedVisitor = await this.visitorServices.findVisitorByDni(dni)
-        if(!selectedVisitor){
+        if(!selectedVisitor) {
             return {
                 status: 404,
                 message: 'Visitor not found'
@@ -181,4 +165,52 @@ export class StayServices {
         }
     }
 
+    private async completeDataStay(stays: StayEntity[]): Promise<any> {
+        const stayTypes = await this.stayTypeRepository.getAllStayTypes()
+        return await Promise.all(stays.map(async (selectedStay) => {
+            const groupActives = await this.groupServices.findGroupsByIdsStay([selectedStay.id])
+            const visitorActives = await this.visitorServices.findVisitorsByIdGroup(groupActives[0].id)
+            const selectedStayType = stayTypes.find(stayType => stayType.id === selectedStay.stayType)
+            selectedStay.completeStay(groupActives[0], visitorActives)
+            selectedStay.stayType = selectedStayType.name
+
+            return selectedStay
+        }))
+    }
+
+    async generateRegisterClouser(workshift: WorkshiftEntity): Promise<void> {
+        const toDate = new Date()
+        toDate.setUTCHours(0)
+        toDate.setUTCMinutes(0)
+        toDate.setUTCSeconds(0)
+
+        const fromDate = new Date()
+        fromDate.setUTCHours(24)
+        fromDate.setUTCMinutes(0)
+        fromDate.setUTCSeconds(0)
+
+        let totalEarning = 0
+        let totalMembers = 0
+        let totalNoMembers = 0
+        let totalDiscounts = 0
+        const staysCreatedOnDay = await this.stayRepository.findByDates(toDate,fromDate)
+        this.completeDataStay(staysCreatedOnDay)
+
+        staysCreatedOnDay.forEach(stay => {
+            const totalVisitors = stay.visitors.length
+            const members = stay.visitors.filter(visitor => visitor.person?.memberNum)
+            const discounts = stay.visitors.filter(visitor => visitor.idDiscount)
+            totalEarning += stay.amount
+            totalMembers += members.length
+            totalNoMembers += Math.abs(totalVisitors - members.length)
+            totalDiscounts += discounts.length
+        })
+
+
+        const employee = await this.personServices.findPersons([parseInt(workshift.dniEmployee)])
+        const totalVisitors = totalMembers + totalNoMembers
+        const totalStay = staysCreatedOnDay.length
+
+
+    }
 }
