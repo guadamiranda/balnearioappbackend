@@ -104,7 +104,8 @@ export class StayServices {
             return {
                 ...selectedStay,
                 dni: visitorsManager.nroDoc,
-                name: `${visitorsManager.person.firstName} ${visitorsManager.person.lastName}`
+                name: `${visitorsManager.person.firstName} ${visitorsManager.person.lastName}`,
+                phone: visitorsManager.person?.phone
             }
         }))
 
