@@ -1,3 +1,4 @@
+import { ISenderEmail } from "src/shared/infrastructure/email/interface-api-email";
 import { WorkshiftEntity } from "../../employees/domain/workshift-entity";
 import { StayTypeRepository } from "../repository/stay-type-repository";
 import { StayRepository } from "../repository/stay-repository";
@@ -22,7 +23,8 @@ export class StayServices {
         private readonly vehicleServices: VehicleServices,
         private readonly animalServices: AnimalServices,
         private readonly stayTypeRepository: StayTypeRepository,
-        private readonly personServices: PersonServices
+        private readonly personServices: PersonServices,
+        private readonly senderEmail: ISenderEmail
     ) {}
     
     async buildStayCamping(stayEntity: StayEntity, groupEntity: GroupEntity, visitorEntities: VisitorEntity[]):Promise<StayEntity> {
@@ -165,7 +167,7 @@ export class StayServices {
         }
     }
 
-    private async completeDataStay(stays: StayEntity[]): Promise<any> {
+    async completeDataStay(stays: StayEntity[]): Promise<StayEntity[]> {
         const stayTypes = await this.stayTypeRepository.getAllStayTypes()
         return await Promise.all(stays.map(async (selectedStay) => {
             const groupActives = await this.groupServices.findGroupsByIdsStay([selectedStay.id])
@@ -180,37 +182,42 @@ export class StayServices {
 
     async generateRegisterClouser(workshift: WorkshiftEntity): Promise<void> {
         const toDate = new Date()
+        //toDate.setUTCDate(7)
         toDate.setUTCHours(0)
         toDate.setUTCMinutes(0)
         toDate.setUTCSeconds(0)
 
         const fromDate = new Date()
+        //fromDate.setUTCDate(8)
         fromDate.setUTCHours(24)
         fromDate.setUTCMinutes(0)
         fromDate.setUTCSeconds(0)
 
-        let totalEarning = 0
-        let totalMembers = 0
-        let totalNoMembers = 0
-        let totalDiscounts = 0
-        const staysCreatedOnDay = await this.stayRepository.findByDates(toDate,fromDate)
-        this.completeDataStay(staysCreatedOnDay)
+        const totals = {
+            totalEarning: 0,
+            totalMembers: 0,
+            totalNoMembers: 0,
+            totalDiscounts: 0,
+            totalVisitors: 0,
+            totalStayOnDay: 0
+        }
 
-        staysCreatedOnDay.forEach(stay => {
+        const staysCreatedOnDay = await this.stayRepository.findByDates(toDate,fromDate)
+        const stays = await this.completeDataStay(staysCreatedOnDay)
+
+        stays.forEach(stay => {
             const totalVisitors = stay.visitors.length
             const members = stay.visitors.filter(visitor => visitor.person?.memberNum)
             const discounts = stay.visitors.filter(visitor => visitor.idDiscount)
-            totalEarning += stay.amount
-            totalMembers += members.length
-            totalNoMembers += Math.abs(totalVisitors - members.length)
-            totalDiscounts += discounts.length
+            totals.totalEarning += stay.amount
+            totals.totalMembers += members.length
+            totals.totalNoMembers += Math.abs(totalVisitors - members.length)
+            totals.totalDiscounts += discounts.length
         })
 
+        totals.totalVisitors = totals.totalMembers + totals.totalNoMembers
+        totals.totalStayOnDay = staysCreatedOnDay.length
 
-        const employee = await this.personServices.findPersons([parseInt(workshift.dniEmployee)])
-        const totalVisitors = totalMembers + totalNoMembers
-        const totalStay = staysCreatedOnDay.length
-
-
+        await this.senderEmail.sendRegisterClouser(totals, workshift)
     }
 }

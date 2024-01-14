@@ -1,4 +1,4 @@
 export abstract class ISenderEmail {
-    abstract sendRegisterClouser(email,reportRegisterClouser);
+    abstract sendRegisterClouser(total, workshift);
     abstract sendEmail(mail);
 }

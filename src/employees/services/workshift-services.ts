@@ -1,12 +1,14 @@
 import { WorkshiftRepository } from "../repository/workshift-repository";
 import { StayServices } from "../../stays/services/stay-services";
 import { WorkshiftEntity } from "../domain/workshift-entity";
+import { EmployeeService } from "./employe-services";
 import { Injectable } from "@nestjs/common";
 
 @Injectable()
 export class WorkshiftService {
     constructor(
         private readonly workshiftRepository: WorkshiftRepository,
+        private readonly employeeServices: EmployeeService,
         private readonly stayServices: StayServices
     ) {}
     async initWorkshift(dniEmployee: string): Promise<WorkshiftEntity> {
@@ -21,7 +23,9 @@ export class WorkshiftService {
         }
         
         workshift.finish(new Date().toISOString(), observations)
-        this.stayServices.generateRegisterClouser(workshift)
+        const employee = await this.employeeServices.findEmployee(workshift.dniEmployee)
+        workshift.setEmployee(employee)
+        await this.stayServices.generateRegisterClouser(workshift)
         return await this.workshiftRepository.updateOne(workshift)
     }
 }

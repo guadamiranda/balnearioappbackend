@@ -92,7 +92,7 @@ export class StayRepository {
         const {data: staysQuery, error} = await this.repository
             .from(this.STAY_TABLE_NAME)
             .select()
-            .gte('start_date', startDate.toISOString())
+            .gte('init_date', startDate.toISOString())
             .lte('finish_date', endDate.toISOString())
         
         if(error) {
