@@ -25,7 +25,14 @@ export class WorkshiftService {
         workshift.finish(new Date().toISOString(), observations)
         const employee = await this.employeeServices.findEmployee(workshift.dniEmployee)
         workshift.setEmployee(employee)
-        await this.stayServices.generateRegisterClouser(workshift)
+
+        const adminEmployees = await this.employeeServices.findAdminEmployees()
+        const adminEmployeesWithEmail = adminEmployees.filter(admin => admin.email)
+        
+        await this.stayServices.generateRegisterClouser(
+            workshift, 
+            adminEmployeesWithEmail.map(admin => admin.email)
+        )
         return await this.workshiftRepository.updateOne(workshift)
     }
 }

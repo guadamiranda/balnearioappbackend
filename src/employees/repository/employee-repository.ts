@@ -1,7 +1,7 @@
 import { IRepositoryConnection } from "../../shared/infrastructure/connection/repository-connection";
 import { Injectable } from "@nestjs/common";
 import { EmployeEntity } from "../domain/employe-entity";
-import { EmployeeRow } from "./dto/employee-row";
+import { EmployeeRow, IEmployeeColumns } from "./dto/employee-row";
 
 @Injectable()
 export class EmployeeRepository {
@@ -74,5 +74,28 @@ export class EmployeeRepository {
         }
 
         return true
+    }
+
+    async findBySimpleCondition(column: IEmployeeColumns, value: string | number | any[]): Promise<EmployeEntity[]> {
+        if(Array.isArray(value)) {
+            const {data:employeeQuery, error} = await this.repository
+            .from(this.EMPLOYEE_TABLE_NAME)
+            .select()
+            .in(column, value)
+            if(error) {
+                throw Error(`Error en la busqueda de los valores ${value} en la columna ${column}\n ${error}`)
+            }
+            return EmployeeRow.convertRowsToEntities(employeeQuery as EmployeeRow[])
+        }
+
+        const {data:employeeQuery, error} = await this.repository
+        .from(this.EMPLOYEE_TABLE_NAME)
+        .select()
+        .eq(column, value)
+
+        if(error) {
+            throw Error(`Error en la busqueda del valor ${value} en la columna ${column}.\n ${error}`)
+        }
+        return EmployeeRow.convertRowsToEntities(employeeQuery as EmployeeRow[])
     }
 }

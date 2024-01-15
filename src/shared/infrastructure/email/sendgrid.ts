@@ -1,6 +1,7 @@
 import { WorkshiftEntity } from "../../../employees/domain/workshift-entity";
 import { ISenderEmail } from "./interface-api-email";
 import { Injectable } from "@nestjs/common";
+import { ConfigService } from "@nestjs/config"
 import * as SendGrid from '@sendgrid/mail';
 
 interface ITotalsOnDay {
@@ -15,20 +16,23 @@ interface ITotalsOnDay {
 @Injectable()
 export class SendgridProvider implements ISenderEmail {
     private API_KEY = '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'
-    private sender = SendGrid.setApiKey(this.API_KEY)
+    constructor(private readonly configService: ConfigService) {
+      SendGrid.setApiKey(this.configService.get<string>('SEND_GRID_KEY'))
+    }
     async sendEmail(mail: any) {
         try {
-            SendGrid.setApiKey(this.API_KEY)
             console.log(`E-Mail sent to ${mail.to}`);
-            const transport = await SendGrid.send(mail);
+            await SendGrid.send(mail);
         } catch (error) {
             console.log(error)
             console.log(error.body.errors)
             throw Error('Email not sent')
         }
-        // avoid this on production. use log instead :)
     }
-    sendRegisterClouser(totals: ITotalsOnDay, workshift: WorkshiftEntity) {
+    sendRegisterClouser(totals: ITotalsOnDay, workshift: WorkshiftEntity, adminEmployeesEmail: string[]) {
+        const today = new Date()
+        const fullDate = `${today.getDate()}/${today.getMonth() + 1}/${today.getFullYear()}`
+        const hourDate = `${today.getHours()}:${today.getMinutes()}}`
         const templateHtml = `
         <table style="border-collapse: collapse;">
         <tr style="background-color: #f2f2f2;">
@@ -69,10 +73,9 @@ export class SendgridProvider implements ISenderEmail {
       </table>
         `
         this.sendEmail({
-            to: workshift.employee.email,
-            subject: 'Hello from sendgrid',
+            to: adminEmployeesEmail,
+            subject: `Cierre de Caja Camping Nogales ${fullDate} ${hourDate}`,
             from: 'small.software97@gmail.com',
-            text: 'Test',
             html: templateHtml,
           })
     }

@@ -180,7 +180,7 @@ export class StayServices {
         }))
     }
 
-    async generateRegisterClouser(workshift: WorkshiftEntity): Promise<void> {
+    async generateRegisterClouser(workshift: WorkshiftEntity, adminEmployeesEmail: string[]): Promise<void> {
         const toDate = new Date()
         //toDate.setUTCDate(7)
         toDate.setUTCHours(0)
@@ -218,6 +218,6 @@ export class StayServices {
         totals.totalVisitors = totals.totalMembers + totals.totalNoMembers
         totals.totalStayOnDay = staysCreatedOnDay.length
 
-        await this.senderEmail.sendRegisterClouser(totals, workshift)
+        await this.senderEmail.sendRegisterClouser(totals, workshift, adminEmployeesEmail)
     }
 }

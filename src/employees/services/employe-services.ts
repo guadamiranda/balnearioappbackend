@@ -46,6 +46,14 @@ export class EmployeeService {
         return await this.employeeRepository.updateOne(employeeEntity)
     }
 
+    async findAdminEmployees(): Promise<EmployeEntity[]> {
+        const adminEmployees = await this.employeeRepository.findBySimpleCondition("role_type_id", "eb2c431f-ce15-4770-af81-09c2a1c41fa2")
+        if(adminEmployees.length === 0) {
+            throw new Error('No se encontraron empleados con rol de administrador')
+        }
+        return adminEmployees
+    }
+
     async dismissalEmployeesByIds(dnis: string[]): Promise<Object> {
         if(await this.employeeRepository.dismissalManyByIds(dnis)) 
         {
