@@ -94,6 +94,7 @@ export class StayServices {
             return {
                 ...stay,
                 dni: manager.nroDoc,
+                name: `${manager.person?.firstName} ${manager.person?.lastName}`,
                 phone: manager.person?.phone
             }
         })
