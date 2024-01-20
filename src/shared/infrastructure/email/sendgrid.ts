@@ -31,7 +31,7 @@ export class SendgridProvider implements ISenderEmail {
     sendRegisterClouser(totals: ITotalsOnDay, workshift: WorkshiftEntity, adminEmployeesEmail: string[]) {
         const today = new Date()
         const fullDate = `${today.getDate()}/${today.getMonth() + 1}/${today.getFullYear()}`
-        const hourDate = `${today.getHours()}:${today.getMinutes()}}`
+        const hourDate = `${today.getHours() - 3}:${today.getMinutes()}}`
         const templateHtml = `
         <table style="border-collapse: collapse;">
         <tr style="background-color: #f2f2f2;">
