@@ -184,12 +184,14 @@ export class StayServices {
     async generateRegisterClouser(workshift: WorkshiftEntity, adminEmployeesEmail: string[]): Promise<void> {
         const toDate = new Date()
         //toDate.setUTCDate(7)
+        toDate.setUTCDate(toDate.getUTCDate() - 1)
         toDate.setUTCHours(0)
         toDate.setUTCMinutes(0)
         toDate.setUTCSeconds(0)
 
         const fromDate = new Date()
         //fromDate.setUTCDate(8)
+        fromDate.setUTCDate(fromDate.getUTCDate() - 1)
         fromDate.setUTCHours(24)
         fromDate.setUTCMinutes(0)
         fromDate.setUTCSeconds(0)
