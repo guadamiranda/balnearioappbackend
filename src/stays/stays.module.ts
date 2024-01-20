@@ -44,7 +44,7 @@ import { StayTypeRepository } from './repository/stay-type-repository';
     StayTypeRepository
   ],
   exports: [
-
+    StayServices
   ]
 })
 export class StaysModule {}

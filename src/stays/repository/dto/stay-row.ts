@@ -18,6 +18,10 @@ export class StayRow {
         return tableStay
     }
 
+    static convertRowsToEntities(rows: StayRow[]): StayEntity[] {
+        return rows.map(row => this.convertTableToEntity(row))
+    }
+
     static convertTableToEntity(tableRow: StayRow): StayEntity {
         const stayEntity = new StayEntity(
             new Date(tableRow.init_date).getTime(), 

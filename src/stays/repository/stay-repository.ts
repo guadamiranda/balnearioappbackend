@@ -87,6 +87,21 @@ export class StayRepository {
         }
         return true
     }
+
+    async findByDates(startDate: Date, endDate: Date): Promise<StayEntity[]> {
+        const {data: staysQuery, error} = await this.repository
+            .from(this.STAY_TABLE_NAME)
+            .select()
+            .gte('init_date', startDate.toISOString())
+            .lte('finish_date', endDate.toISOString())
+        
+        if(error) {
+            console.log("Error consultando las estadias entre las fechas " + startDate.toISOString() + " y " + endDate.toISOString() ,error)
+            return null
+        }
+
+        return StayRow.convertRowsToEntities(staysQuery as StayRow[])
+    }
     /*async createEmploye(userEntity: UserEntity, password: string): Promise<UserEntity> {
         const repository = this.supabaseRepository.getConnection()
         try {

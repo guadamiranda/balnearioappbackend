@@ -25,4 +25,8 @@ export class StayEntity {
     setId(id) {
         this.id = id
     }
+
+    getManager(): VisitorEntity {
+        return this.visitors.find(visitor => visitor.isManager)
+    }
 }

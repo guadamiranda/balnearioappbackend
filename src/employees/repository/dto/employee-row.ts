@@ -1,5 +1,7 @@
 import { EmployeEntity } from "../../domain/employe-entity"
 
+export type IEmployeeColumns = "dni" |"first_name" | "last_name" | "email" | "password" | "role_type_id" | "is_deleted"
+
 export class EmployeeRow {
     dni: string
     first_name: string
