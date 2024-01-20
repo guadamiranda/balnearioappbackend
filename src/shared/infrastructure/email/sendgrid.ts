@@ -15,7 +15,6 @@ interface ITotalsOnDay {
 
 @Injectable()
 export class SendgridProvider implements ISenderEmail {
-    private API_KEY = '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'
     constructor(private readonly configService: ConfigService) {
       SendGrid.setApiKey(this.configService.get<string>('SEND_GRID_KEY'))
     }
