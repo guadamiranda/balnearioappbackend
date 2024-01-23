@@ -172,8 +172,12 @@ export class StayServices {
 
     async completeDataStay(stays: StayEntity[]): Promise<StayEntity[]> {
         const stayTypes = await this.stayTypeRepository.getAllStayTypes()
-        return await Promise.all(stays.map(async (selectedStay) => {
+        const completeStays = await Promise.all(stays.map(async (selectedStay) => {
             const groupActives = await this.groupServices.findGroupsByIdsStay([selectedStay.id])
+            if(groupActives.length == 0) {
+                console.log(`Error, la siguiente estadia ${selectedStay} no tiene grupo activo`)
+                return null
+            }
             const visitorActives = await this.visitorServices.findVisitorsByIdGroup(groupActives[0].id)
             const selectedStayType = stayTypes.find(stayType => stayType.id === selectedStay.stayType)
             selectedStay.completeStay(groupActives[0], visitorActives)
@@ -181,6 +185,8 @@ export class StayServices {
 
             return selectedStay
         }))
+
+        return completeStays.filter(stay => stay != null)
     }
 
     async generateRegisterClouser(workshift: WorkshiftEntity, adminEmployeesEmail: string[]): Promise<void> {
