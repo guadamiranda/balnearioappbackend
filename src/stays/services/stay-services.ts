@@ -1,4 +1,5 @@
-import { ISenderEmail } from "src/shared/infrastructure/email/interface-api-email";
+import { IEmployeeOnDayReport } from "../../shared/infrastructure/email/sendgrid";
+import { ISenderEmail } from "../../shared/infrastructure/email/interface-api-email";
 import { WorkshiftEntity } from "../../employees/domain/workshift-entity";
 import { StayTypeRepository } from "../repository/stay-type-repository";
 import { StayRepository } from "../repository/stay-repository";
@@ -13,6 +14,7 @@ import { StayEntity } from "../domain/stay-entity";
 import { AnimalServices } from "./animal-services";
 import { GroupServices } from "./group-services";
 import { Injectable } from "@nestjs/common";
+
 
 @Injectable()
 export class StayServices {
@@ -205,6 +207,13 @@ export class StayServices {
             totalStayOnDay: 0
         }
 
+        const employeeData: IEmployeeOnDayReport = {
+            dni: workshift.dniEmployee,
+            nameEmployee: `${workshift.employee?.firstName} ${workshift.employee?.lastName}`,
+            initDate: workshift.initDate,
+            finishDate: workshift.finishDate
+        }
+
         const staysCreatedOnDay = await this.stayRepository.findByDates(toDate,fromDate)
         const stays = await this.completeDataStay(staysCreatedOnDay)
 
@@ -221,6 +230,6 @@ export class StayServices {
         totals.totalVisitors = totals.totalMembers + totals.totalNoMembers
         totals.totalStayOnDay = staysCreatedOnDay.length
 
-        await this.senderEmail.sendRegisterClouser(totals, workshift, adminEmployeesEmail)
+        await this.senderEmail.sendRegisterClouser(totals, employeeData, adminEmployeesEmail)
     }
 }
