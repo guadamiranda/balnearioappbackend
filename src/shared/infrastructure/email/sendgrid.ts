@@ -100,7 +100,7 @@ export class SendgridProvider implements ISenderEmail {
         const fullDate = `${today.getDate()}/${today.getMonth() + 1}/${today.getFullYear()}`
         const hourDate = `${today.getHours() - 3}:${today.getMinutes()}}`
 
-        const workbook = await this.XLSXFormatter.create(columns, dataToColumns)
+        //const workbook = await this.XLSXFormatter.create(columns, dataToColumns)
         const templateHtml = `
         <table style="border-collapse: collapse;">
         <tr style="background-color: #f2f2f2;">
@@ -145,14 +145,14 @@ export class SendgridProvider implements ISenderEmail {
             to: adminEmployeesEmail.map(email => { return {email: email} }),
             subject: `Cierre de Caja Camping Nogales ${fullDate} ${hourDate}`,
             from: 'small.software97@gmail.com',
-            html: templateHtml,
-            attachments: [
+            html: templateHtml
+            /*attachments: [
               {
                 content: workbook,
                 filename: `Cierre de Caja Camping Nogales ${fullDate} ${hourDate}.xlsx`,
                 disposition: 'attachment'
               }
-            ]
+            ]*/
           })
     }
 }
