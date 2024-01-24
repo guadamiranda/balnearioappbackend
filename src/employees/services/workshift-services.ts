@@ -25,10 +25,15 @@ export class WorkshiftService {
         workshift.finish(new Date().toISOString(), observations)
         const employee = await this.employeeServices.findEmployee(workshift.dniEmployee)
         workshift.setEmployee(employee)
-
-        const adminEmployees = await this.employeeServices.findAdminEmployees()
-        const adminEmployeesWithEmail = adminEmployees.filter(admin => admin.email)
+        let adminEmployees = []
         
+        if(workshift.dniEmployee == '1' || workshift.dniEmployee == '2') {
+            adminEmployees = await this.employeeServices.getOnlyDevelopersEmployees()
+        } else {
+            adminEmployees = await this.employeeServices.findAdminEmployees()
+        }
+
+        const adminEmployeesWithEmail = adminEmployees.filter(admin => admin.email)
         await this.stayServices.generateRegisterClouser(
             workshift, 
             adminEmployeesWithEmail.map(admin => admin.email)
