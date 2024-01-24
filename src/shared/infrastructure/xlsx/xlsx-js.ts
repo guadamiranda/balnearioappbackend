@@ -10,11 +10,11 @@ export interface IColumnsXlsx {
 @Injectable()
 export class XLSXJS implements IFormatterXLSX {
     async create(columns, data) {
-        const workbook = new Workbook();
+        /*const workbook = new Workbook();
         const worksheet = workbook.addWorksheet();
         worksheet.columns = columns;
         worksheet.addRows(data);
         const buffer = await worksheet.workbook.xlsx.writeBuffer()
-        return (buffer as Buffer).toString("base64");
+        return (buffer as Buffer).toString("base64");*/
     }
 }
