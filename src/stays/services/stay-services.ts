@@ -15,7 +15,6 @@ import { AnimalServices } from "./animal-services";
 import { GroupServices } from "./group-services";
 import { Injectable } from "@nestjs/common";
 
-
 @Injectable()
 export class StayServices {
     constructor(

@@ -1,5 +1,6 @@
 import { VisitorEntity } from "./visitor-entity"
 import { GroupEntity } from "./group-entity"
+import { PayTypeCode, PayTypeEntity } from "./pay-type-entity"
 
 export class StayEntity {
     id: string
@@ -7,14 +8,16 @@ export class StayEntity {
     finishDate: number
     amount: number
     stayType: string
+    payTypeCode: PayTypeCode
     group?: GroupEntity
     visitors?: VisitorEntity[]
 
-    constructor(initDate, finishDate, amount, stayType) {
+    constructor(initDate, finishDate, amount, stayType, payTypeCode) {
         this.initDate = parseFloat(initDate),
         this.finishDate = parseFloat(finishDate),
         this.amount = amount,
         this.stayType = stayType
+        this.payTypeCode = PayTypeEntity.convertToEnumCode(payTypeCode)
     }
 
     completeStay(groupEntity: GroupEntity, visitorEntities: VisitorEntity[]) {
