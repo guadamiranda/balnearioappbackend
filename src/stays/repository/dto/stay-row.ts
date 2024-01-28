@@ -6,6 +6,7 @@ export class StayRow {
     finish_date: string
     amount: number
     stay_type: string
+    pay_type: string
 
     static convertEntityToTable(stayEntity: StayEntity): StayRow {
         const tableStay = new StayRow()
@@ -14,6 +15,7 @@ export class StayRow {
         tableStay.finish_date = new Date(stayEntity.finishDate).toISOString()
         tableStay.amount = stayEntity.amount
         tableStay.stay_type = stayEntity.stayType
+        tableStay.pay_type = stayEntity.payTypeCode
 
         return tableStay
     }
@@ -27,7 +29,8 @@ export class StayRow {
             new Date(tableRow.init_date).getTime(), 
             new Date(tableRow.finish_date).getTime(), 
             tableRow.amount, 
-            tableRow.stay_type
+            tableRow.stay_type,
+            tableRow.pay_type
         )
 
         stayEntity.setId(tableRow.id)

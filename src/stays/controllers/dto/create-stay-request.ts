@@ -8,6 +8,7 @@ export class CreateStayRequest {
     amount: number
     stayType: string
     group: CreateGroupRequest
+    payTypeCode: string
     visitors: CreateVisitorRequest[]
 
     static getStayEntity(createStayRequest: CreateStayRequest): StayEntity {
@@ -15,7 +16,8 @@ export class CreateStayRequest {
             createStayRequest.initDate,
             createStayRequest.finishDate,
             createStayRequest.amount,
-            createStayRequest.stayType
+            createStayRequest.stayType,
+            createStayRequest.payTypeCode
         )
     }
 }
