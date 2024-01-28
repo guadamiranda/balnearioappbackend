@@ -63,6 +63,14 @@ export class EmployeeService {
         }
     }
 
+    async getOnlyDevelopersEmployees(): Promise<EmployeEntity[]> {
+        const devsEmployee = await this.employeeRepository.findBySimpleCondition("dni", [1,2])
+        if(devsEmployee.length === 0) {
+            throw new Error('Error al buscar a los desarrolladores')
+        }
+        return devsEmployee
+    }
+
     private isEmptyObject(obj) {
         return Object.keys(obj).length === 0;
     }

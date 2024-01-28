@@ -31,11 +31,12 @@ export class SendgridProvider implements ISenderEmail {
     }
     async sendEmail(mail: any) {
         try {
-            await SendGrid.send(mail);
+            console.log('Estamos a punto de enviar el mail')
+            const response = await SendGrid.send(mail);
+            console.log(response)
             console.log(`Email enviado a ${mail.to.map(email => email.email)}`);
         } catch (error) {
-            console.log(error)
-            console.log(error.body.errors)
+            console.log(error.body?.errors)
             throw Error('Email not sent')
         }
     }
@@ -100,7 +101,7 @@ export class SendgridProvider implements ISenderEmail {
         const fullDate = `${today.getDate()}/${today.getMonth() + 1}/${today.getFullYear()}`
         const hourDate = `${today.getHours() - 3}:${today.getMinutes()}}`
 
-        const workbook = await this.XLSXFormatter.create(columns, dataToColumns)
+        //const workbook = await this.XLSXFormatter.create(columns, dataToColumns)
         const templateHtml = `
         <table style="border-collapse: collapse;">
         <tr style="background-color: #f2f2f2;">
@@ -140,19 +141,19 @@ export class SendgridProvider implements ISenderEmail {
         </tr>
       </table>
         `
-        
-        this.sendEmail({
+        console.log(`Preparando cierre de Caja Camping Nogales ${fullDate} ${hourDate}`)
+        await this.sendEmail({
             to: adminEmployeesEmail.map(email => { return {email: email} }),
             subject: `Cierre de Caja Camping Nogales ${fullDate} ${hourDate}`,
             from: 'small.software97@gmail.com',
-            html: templateHtml,
-            attachments: [
+            html: templateHtml
+            /*attachments: [
               {
                 content: workbook,
                 filename: `Cierre de Caja Camping Nogales ${fullDate} ${hourDate}.xlsx`,
                 disposition: 'attachment'
               }
-            ]
+            ]*/
           })
     }
 }
