@@ -40,4 +40,12 @@ export class WorkshiftService {
         )
         return await this.workshiftRepository.updateOne(workshift)
     }
+
+    async getByDniEmployee(idEmployee: string[]): Promise<WorkshiftEntity[]> {
+        return await this.workshiftRepository.findBySimpleCondition('employee_dni', idEmployee)
+    }
+
+    async deleteWorkshiftsByIds(ids: string[]): Promise<boolean> {
+        return await this.workshiftRepository.deleteByIds(ids)
+    }
 }

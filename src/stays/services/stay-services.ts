@@ -9,7 +9,6 @@ import { AnimalEntity } from "../domain/animal-entity";
 import { VehicleServices } from "./vehicle-services";
 import { GroupEntity } from "../domain/group-entity";
 import { VisitorServices } from "./visitor-services";
-import { PersonServices } from "./person-services";
 import { StayEntity } from "../domain/stay-entity";
 import { AnimalServices } from "./animal-services";
 import { GroupServices } from "./group-services";
@@ -24,7 +23,6 @@ export class StayServices {
         private readonly vehicleServices: VehicleServices,
         private readonly animalServices: AnimalServices,
         private readonly stayTypeRepository: StayTypeRepository,
-        private readonly personServices: PersonServices,
         private readonly senderEmail: ISenderEmail
     ) {}
     
@@ -61,16 +59,20 @@ export class StayServices {
             return stayEntity
         } catch (error) {
             console.log('Something was wrong in the creation of stay, trying to delete wrong stay ', error)
-            if(groupEntity.id) {
-                const idGroup = [groupEntity.id]
-                await this.visitorServices.deleteVisitorsByIdsGroup(idGroup)
-                await this.animalServices.deleteAnimalsByIdsGroup(idGroup)
-                await this.groupServices.deleteGroupsByIds(idGroup)
-            }
-            
-            await this.stayRepository.deleteByIds([stayEntity.id])
+            await this.deleteStay(groupEntity.id, stayEntity.id)
             throw Error(`Something was wrong in the creation of stay ${error.message}`)
         }
+    }
+
+    async deleteStay(groupId: string, stayId: string): Promise<Boolean> {
+        if(groupId) {
+            const groupIds = [groupId]
+            await this.visitorServices.deleteVisitorsByIdsGroup(groupIds)
+            await this.animalServices.deleteAnimalsByIdsGroup(groupIds)
+            await this.groupServices.deleteGroupsByIds(groupIds)
+        }
+        await this.stayRepository.deleteByIds([stayId])
+        return true
     }
 
     async createVisitors(visitorEntities: VisitorEntity[], groupEntityId: String) {
@@ -186,6 +188,27 @@ export class StayServices {
         }))
 
         return completeStays.filter(stay => stay != null)
+    }
+
+    async deleteStaysByWorkshiftIds(workshiftIds: string[]): Promise<Boolean> {
+        const groups = await this.groupServices.findByWorkshiftIds(workshiftIds);
+        const checkDeleted = await Promise.all(groups.map(async group => {
+            const status = {
+                idStay: group.idStay,
+                isDeleted: true
+            }
+
+            if(await this.deleteStay(group.id, group.idStay)) {
+                return status
+            }
+            status.isDeleted = false
+            return status
+        }))
+        
+        const nonDeletedStays = checkDeleted.filter(stay => !stay.isDeleted)
+        if(nonDeletedStays.length > 0)
+            throw Error(`Error deleting stay ${nonDeletedStays.map(nonDeletedStay => nonDeletedStay.idStay)}`)
+        return true
     }
 
     async generateRegisterClouser(workshift: WorkshiftEntity, adminEmployeesEmail: string[]): Promise<void> {

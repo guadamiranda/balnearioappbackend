@@ -32,6 +32,14 @@ export class GroupServices {
         return true
     }
 
+    async findByWorkshiftIds(ids: string[]): Promise<GroupEntity[]> {
+        console.log('Groups to be found by workshift ids: ', ids)
+        const groups = await this.groupRepository.findBySimpleCondition('id_workshift', ids)
+        if(!groups) 
+            throw Error('Error finding groups by workshifts ids')
+        return groups
+    }
+
     async findGroupById(id: string): Promise<GroupEntity> {
         console.log('Group to be found: ', id)
         const group = await this.groupRepository.findOne(id)
