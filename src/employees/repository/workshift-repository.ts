@@ -25,6 +25,18 @@ export class WorkshiftRepository {
         return WorkShiftRow.convertRowsToEntities(workshiftQuery as WorkShiftRow[])[0]
     }
 
+    async deleteByIds(ids: string[]): Promise<boolean> {
+        const { error } = await this.repository
+            .from(this.WORKSHIFT_TABLE_NAME)
+            .delete()
+            .in('id', ids)
+        if(error) {
+            console.log("Error al borrar los worksfhits \n", error)
+            return false
+        }
+        return true
+    }
+
     async findOne(id: string): Promise<WorkshiftEntity> {
         const {data:workshiftQuery, error} = await this.repository
         .from(this.WORKSHIFT_TABLE_NAME)
@@ -53,6 +65,30 @@ export class WorkshiftRepository {
         }
 
         return WorkShiftRow.convertRowsToEntities(workshiftQuery as WorkShiftRow[])[0]
+    }
+
+    async findBySimpleCondition(column: string, value: string | number | any[]): Promise<WorkshiftEntity[]> {
+        if(Array.isArray(value)) {
+            const {data: workshiftQuery, error} = await this.repository
+            .from(this.WORKSHIFT_TABLE_NAME)
+            .select()
+            .in(column, value)
+            if(error) {
+                throw Error(`Error en la busqueda de los valores ${value} en la columna ${column}\n ${error}`)
+            }
+            return WorkShiftRow.convertRowsToEntities(workshiftQuery as WorkShiftRow[])
+        }
+
+        const {data: workshiftQuery, error} = await this.repository
+        .from(this.WORKSHIFT_TABLE_NAME)
+        .select()
+        .eq(column, value)
+
+        if(error) {
+            throw Error(`Error en la busqueda de los valores ${value} en la columna ${column}\n ${error}`)
+        }
+
+        return WorkShiftRow.convertRowsToEntities(workshiftQuery as WorkShiftRow[])
     }
 
 }

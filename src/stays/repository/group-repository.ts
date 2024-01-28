@@ -69,4 +69,28 @@ export class GroupRepository {
         }
         return true
     }
+
+    async findBySimpleCondition(column: string, value: string | number | any[]): Promise<GroupEntity[]> {
+        if(Array.isArray(value)) {
+            const {data: groupQuery, error} = await this.repository
+            .from(this.GROUP_TABLE_NAME)
+            .select()
+            .in(column, value)
+            if(error) {
+                console.log(`Error en la busqueda de los valores ${value} en la columna ${column}\n ${error}`)
+                return null
+            }
+            return groupQuery.map(group => GroupRow.convertTableToEntity(group as GroupRow))
+        }
+
+        const {data: groupQuery, error} = await this.repository
+        .from(this.GROUP_TABLE_NAME)
+        .select()
+        .eq(column, value)
+
+        if(error) {
+            throw Error(`Error en la busqueda del valor ${value} en la columna ${column}.\n ${error}`)
+        }
+        return GroupRow.convertRowsToEntities(groupQuery as GroupRow[])
+    }
 }

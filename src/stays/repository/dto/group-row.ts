@@ -7,6 +7,10 @@ export class GroupRow {
     car_plate: string
     id_stay: string
 
+    static convertRowsToEntities(rows: GroupRow[]): GroupEntity[] {
+        return rows.map(row => GroupRow.convertTableToEntity(row))
+    }
+
     static convertEntityToTable(entity: GroupEntity): GroupRow {
         const table = new GroupRow()
         table.id = entity.id
